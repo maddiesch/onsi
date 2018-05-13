@@ -1,0 +1,53 @@
+AllCops:
+  TargetRubyVersion: 2.3
+  Exclude:
+    - Rakefile
+    - spec/**/*
+
+Metrics/AbcSize:
+  Max: 30
+
+Metrics/LineLength:
+  Max: 160
+
+Metrics/MethodLength:
+  Enabled: false
+
+Metrics/ParameterLists:
+  Max: 10
+
+Metrics/CyclomaticComplexity:
+  Max: 10
+
+DotPosition:
+  EnforcedStyle: leading
+
+StringLiterals:
+  EnforcedStyle: single_quotes
+
+Layout/AlignParameters:
+  EnforcedStyle: with_fixed_indentation
+
+Layout/MultilineOperationIndentation:
+  EnforcedStyle: indented
+
+Layout/MultilineMethodCallIndentation:
+  EnforcedStyle: indented
+
+Style/AndOr:
+  EnforcedStyle: conditionals
+
+Style/ClassAndModuleChildren:
+  Enabled: false
+
+Style/ConditionalAssignment:
+  Enabled: false
+
+Style/GuardClause:
+  Enabled: false
+
+Style/RaiseArgs:
+  Enabled: false
+
+Style/FrozenStringLiteralComment:
+  Enabled: false
