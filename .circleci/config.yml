@@ -18,14 +18,14 @@ jobs:
             chmod +x ./cc-test-reporter
       - restore_cache:
           keys:
-            - v1-gems-{{ checksum "onsi.gemspec" }}
-            - v1-gems-
+            - v1-gems-latest-{{ checksum "onsi.gemspec" }}
+            - v1-gems-latest-
       - run:
           name: install gems
           command: |
             bundle install --jobs=4 --retry=3 --path vendor/bundle
       - save_cache:
-          key: v1-gems-{{ checksum "onsi.gemspec" }}
+          key: v1-gems-latest-{{ checksum "onsi.gemspec" }}
           paths:
             - ./vendor/bundle
       - run:
@@ -46,14 +46,14 @@ jobs:
       - checkout
       - restore_cache:
           keys:
-            - v1-gems-{{ checksum "onsi.gemspec" }}
-            - v1-gems-
+            - v1-gems-build_2_5-{{ checksum "onsi.gemspec" }}
+            - v1-gems-build_2_5-
       - run:
           name: install gems
           command: |
             bundle install --jobs=4 --retry=3 --path vendor/bundle
       - save_cache:
-          key: v1-gems-{{ checksum "onsi.gemspec" }}
+          key: v1-gems-build_2_5-{{ checksum "onsi.gemspec" }}
           paths:
             - ./vendor/bundle
       - run:
@@ -67,14 +67,14 @@ jobs:
       - checkout
       - restore_cache:
           keys:
-            - v1-gems-{{ checksum "onsi.gemspec" }}
-            - v1-gems-
+            - v1-gems-build_2_4-{{ checksum "onsi.gemspec" }}
+            - v1-gems-build_2_4-
       - run:
           name: install gems
           command: |
             bundle install --jobs=4 --retry=3 --path vendor/bundle
       - save_cache:
-          key: v1-gems-{{ checksum "onsi.gemspec" }}
+          key: v1-gems-build_2_4-{{ checksum "onsi.gemspec" }}
           paths:
             - ./vendor/bundle
       - run:
@@ -88,14 +88,14 @@ jobs:
       - checkout
       - restore_cache:
           keys:
-            - v1-gems-{{ checksum "onsi.gemspec" }}
-            - v1-gems-
+            - v1-gems-build_2_3-{{ checksum "onsi.gemspec" }}
+            - v1-gems-build_2_3-
       - run:
           name: install gems
           command: |
             bundle install --jobs=4 --retry=3 --path vendor/bundle
       - save_cache:
-          key: v1-gems-{{ checksum "onsi.gemspec" }}
+          key: v1-gems-build_2_3-{{ checksum "onsi.gemspec" }}
           paths:
             - ./vendor/bundle
       - run:
