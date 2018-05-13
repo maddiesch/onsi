@@ -1,0 +1,111 @@
+version: 2
+jobs:
+  latest:
+    environment:
+      CC_TEST_REPORTER_ID: 15f1ab72e4d38e92cc8ffe4490022ae9bdc9265a0319c30e673ee3e4e7a5a371
+    docker:
+      - image: circleci/ruby:latest
+    working_directory: ~/repo
+    steps:
+      - checkout
+      - run:
+          name: ruby version
+          command: ruby --version
+      - run:
+          name: Setup Code Climate test-reporter
+          command: |
+            curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
+            chmod +x ./cc-test-reporter
+      - restore_cache:
+          keys:
+            - v1-gems-{{ checksum "onsi.gemspec" }}
+            - v1-gems-
+      - run:
+          name: install gems
+          command: |
+            bundle install --jobs=4 --retry=3 --path vendor/bundle
+      - save_cache:
+          key: v1-gems-{{ checksum "onsi.gemspec" }}
+          paths:
+            - ./vendor/bundle
+      - run:
+          name: Run Specs
+          command: bundle exec rspec spec/**/*.rb
+      - run:
+          name: Report Coverage
+          command: |
+            ./cc-test-reporter format-coverage -t simplecov $CIRCLE_ARTIFACTS/coverage/.resultset.json
+            ./cc-test-reporter upload-coverage
+      - store_artifacts:
+          path: coverage/coverage.json
+  build_2_5:
+    docker:
+      - image: circleci/ruby:2.5
+    working_directory: ~/repo
+    steps:
+      - checkout
+      - restore_cache:
+          keys:
+            - v1-gems-{{ checksum "onsi.gemspec" }}
+            - v1-gems-
+      - run:
+          name: install gems
+          command: |
+            bundle install --jobs=4 --retry=3 --path vendor/bundle
+      - save_cache:
+          key: v1-gems-{{ checksum "onsi.gemspec" }}
+          paths:
+            - ./vendor/bundle
+      - run:
+          name: Run Specs
+          command: bundle exec rspec spec/**/*.rb
+  build_2_4:
+    docker:
+      - image: circleci/ruby:2.4.2
+    working_directory: ~/repo
+    steps:
+      - checkout
+      - restore_cache:
+          keys:
+            - v1-gems-{{ checksum "onsi.gemspec" }}
+            - v1-gems-
+      - run:
+          name: install gems
+          command: |
+            bundle install --jobs=4 --retry=3 --path vendor/bundle
+      - save_cache:
+          key: v1-gems-{{ checksum "onsi.gemspec" }}
+          paths:
+            - ./vendor/bundle
+      - run:
+          name: Run Specs
+          command: bundle exec rspec spec/**/*.rb
+  build_2_3:
+    docker:
+      - image: circleci/ruby:2.3.4
+    working_directory: ~/repo
+    steps:
+      - checkout
+      - restore_cache:
+          keys:
+            - v1-gems-{{ checksum "onsi.gemspec" }}
+            - v1-gems-
+      - run:
+          name: install gems
+          command: |
+            bundle install --jobs=4 --retry=3 --path vendor/bundle
+      - save_cache:
+          key: v1-gems-{{ checksum "onsi.gemspec" }}
+          paths:
+            - ./vendor/bundle
+      - run:
+          name: Run Specs
+          command: bundle exec rspec spec/**/*.rb
+workflows:
+  version: 2
+  specs:
+    jobs:
+      - build_2_3
+      - build_2_4
+      - build_2_5
+      - latest
