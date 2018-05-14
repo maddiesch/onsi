@@ -4,8 +4,15 @@ module Onsi
   module Controller
     extend ActiveSupport::Concern
 
+    module ClassMethods
+      def render_version(version = nil)
+        @render_version = version if version
+        @render_version
+      end
+    end
+
     def render_resource(resource, opts = {})
-      version = opts.delete(:version) || Model::DEFAULT_API_VERSION
+      version = opts.delete(:version) || self.class.render_version || Model::DEFAULT_API_VERSION
       payload = format_resource(resource, version)
       render_options = {}
       render_options[:json] = { data: payload }

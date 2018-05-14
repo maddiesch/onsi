@@ -2,9 +2,12 @@ module Onsi
   class Resource
     attr_reader :object, :version
 
+    class InvalidResourceError < StandardError; end
+
     def initialize(object, version = Model::DEFAULT_API_VERSION)
       @object  = object
       @version = version
+      validate!
     end
 
     def as_json(_opts = {})
@@ -20,6 +23,11 @@ module Onsi
     end
 
     private
+
+    def validate!
+      return if object.class.included_modules.include?(Onsi::Model)
+      raise InvalidResourceError, "Trying to render a #{object.class.name}. But it doesn't include Onsi::Model"
+    end
 
     def type
       object.class.api_renderer(version, for_render: true).type || object.class.name.underscore
