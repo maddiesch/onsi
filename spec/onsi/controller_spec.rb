@@ -12,6 +12,8 @@ RSpec.describe Onsi::Controller do
       end
     end
 
+    class SubTestController < TestController; end
+
     class TestModel
       include Onsi::Model
 
@@ -48,6 +50,10 @@ RSpec.describe Onsi::Controller do
       subject { TestController.new.render_resource(Onsi::Resource.new(TestModel.new, :v3), version: :v1) }
 
       it { expect(subject.dig('data', 'attributes', 'version')).to eq 'v3' }
+    end
+
+    describe 'SubTestController gets supers render_version' do
+      it { expect(SubTestController.render_version).to eq :v2 }
     end
   end
 end

@@ -9,6 +9,10 @@ module Onsi
         @render_version = version if version
         @render_version
       end
+
+      def inherited(subclass)
+        subclass.render_version(@render_version)
+      end
     end
 
     def render_resource(resource, opts = {})

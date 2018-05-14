@@ -7,11 +7,11 @@ module Onsi
     extend ActiveSupport::Concern
 
     module ClassMethods
-      def api_render(version = DEFAULT_API_VERSION, &block)
+      def api_render(version, &block)
         api_renderer(version).instance_exec(&block)
       end
 
-      def api_renderer(version = DEFAULT_API_VERSION, for_render: false)
+      def api_renderer(version, for_render: false)
         @api_renderer ||= {}
         if for_render
           raise Errors::UnknownVersionError.new(self, version) if @api_renderer[version].nil?
