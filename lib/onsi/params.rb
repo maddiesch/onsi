@@ -72,8 +72,12 @@ module Onsi
       attributes.to_h.merge(relationships.to_h).with_indifferent_access
     end
 
+    def fetch(key, default = nil)
+      attrs_hash[key] || default
+    end
+
     def require(key)
-      value = attributes.to_h.with_indifferent_access[key]
+      value = attrs_hash[key]
       if value.nil?
         raise MissingReqiredAttribute.new("Missing attribute #{key}", key)
       end
@@ -84,6 +88,12 @@ module Onsi
       yield(@relationships[key])
     rescue ActiveRecord::RecordNotFound
       raise RelationshipNotFound.new("Can't find relationship #{key}", key)
+    end
+
+    private
+
+    def attrs_hash
+      @attrs_hash ||= attributes.to_h.with_indifferent_access
     end
   end
 end

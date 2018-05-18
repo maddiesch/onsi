@@ -66,6 +66,23 @@ RSpec.describe Onsi::Params do
     end
   end
 
+
+  describe '#fetch' do
+    subject { described_class.parse(params, [:name], %i[person access_tokens]) }
+
+    it 'returns a valid attribute' do
+      expect(subject.fetch(:name)).to eq 'Skylar'
+    end
+
+    it 'returns nil' do
+      expect(subject.fetch(:baz)).to be_nil
+    end
+
+    it 'returns default' do
+      expect(subject.fetch(:baz, :testing)).to eq :testing
+    end
+  end
+
   describe '#safe_fetch' do
     context 'given a valid person' do
       let(:person) { Person.create! first_name: 'Test', last_name: 'Person' }
