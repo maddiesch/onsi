@@ -1,34 +1,34 @@
 require 'rails_helper'
 
 RSpec.describe Onsi::Params do
+  let(:params) do
+    ActionController::Parameters.new(
+      data: {
+        type: 'person',
+        attributes: {
+          name: 'Skylar',
+          foo: 'Bar'
+        },
+        relationships: {
+          person: {
+            data: {
+              type: 'person',
+              id: '7'
+            }
+          },
+          access_tokens: {
+            data: [
+              { type: 'access_token', id: '1' },
+              { type: 'access_token', id: '2' }
+            ]
+          }
+        }
+      }
+    )
+  end
+
   describe '.parse' do
     context 'given valid params' do
-      let(:params) do
-        ActionController::Parameters.new(
-          data: {
-            type: 'person',
-            attributes: {
-              name: 'Skylar',
-              foo: 'Bar'
-            },
-            relationships: {
-              person: {
-                data: {
-                  type: 'person',
-                  id: '7'
-                }
-              },
-              access_tokens: {
-                data: [
-                  { type: 'access_token', id: '1' },
-                  { type: 'access_token', id: '2' }
-                ]
-              }
-            }
-          }
-        )
-      end
-
       subject { described_class.parse(params, [:name], %i[person access_tokens]) }
 
       it { expect { subject }.to_not raise_error }
@@ -36,13 +36,32 @@ RSpec.describe Onsi::Params do
       it { expect(subject.attributes).to eq('name' => 'Skylar') }
 
       it { expect(subject.relationships).to eq(person_id: '7', access_token_ids: %w[1 2]) }
+    end
+  end
 
-      it '#flatten' do
-        expect(subject.flatten).to eq(
-          'name' => 'Skylar',
-          'person_id' => '7',
-          'access_token_ids' => %w[1 2]
-        )
+  describe '#flatten' do
+    subject { described_class.parse(params, [:name], %i[person access_tokens]) }
+
+    it 'merges attributes & relationships' do
+      expect(subject.flatten).to eq(
+        'name' => 'Skylar',
+        'person_id' => '7',
+        'access_token_ids' => %w[1 2]
+      )
+    end
+  end
+
+  describe '#require' do
+    subject { described_class.parse(params, [:name], %i[person access_tokens]) }
+
+    it 'returns a valid attribute' do
+      expect(subject.require(:name)).to eq 'Skylar'
+      expect(subject.require('name')).to eq 'Skylar'
+    end
+
+    it 'raises on missing key' do
+      expect { subject.require(:missing) }.to raise_error Onsi::Params::MissingReqiredAttribute do |err|
+        expect(err.attribute).to eq :missing
       end
     end
   end

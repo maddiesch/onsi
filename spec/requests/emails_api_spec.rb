@@ -31,8 +31,4 @@ RSpec.describe 'Emails API', type: :request do
     it { expect(response).to have_http_status 200 }
     it { expect(subject['data']).to be_a(Hash) }
   end
-
-  describe 'GET /api/v2/people/1/emails/1' do
-    it { expect { get "/api/v2/people/#{person.id}/emails/#{email.id}" }.to raise_error Onsi::Errors::UnknownVersionError }
-  end
 end

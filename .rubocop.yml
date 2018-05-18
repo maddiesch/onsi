@@ -19,6 +19,11 @@ Metrics/ParameterLists:
 Metrics/CyclomaticComplexity:
   Max: 10
 
+Metrics/BlockLength:
+  Enabled: true
+  Exclude:
+    - spec/**/*
+
 DotPosition:
   EnforcedStyle: leading
 
@@ -50,4 +55,7 @@ Style/RaiseArgs:
   Enabled: false
 
 Style/FrozenStringLiteralComment:
+  Enabled: false
+
+Style/IfUnlessModifier:
   Enabled: false

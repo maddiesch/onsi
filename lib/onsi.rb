@@ -1,4 +1,5 @@
 require 'onsi/controller'
+require 'onsi/error_responder'
 require 'onsi/errors'
 require 'onsi/model'
 require 'onsi/params'

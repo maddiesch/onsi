@@ -1,11 +1,8 @@
 class PeopleController < ApplicationController
   include Onsi::Controller
+  include Onsi::ErrorResponder
 
-  def index_v1
-    render_resource Person.all, version: :v1
-  end
-
-  def index_v2
-    render_resource Person.all, version: :v2
+  def index
+    render_resource Person.all, version: params[:version].to_sym
   end
 end

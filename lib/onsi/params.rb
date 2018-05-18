@@ -9,6 +9,15 @@ module Onsi
       end
     end
 
+    class MissingReqiredAttribute < StandardError
+      attr_reader :attribute
+
+      def initialize(message, attr)
+        super(message)
+        @attribute = attr
+      end
+    end
+
     class << self
       def parse(params, attributes = [], relationships = [])
         data = params.require(:data)
@@ -61,6 +70,14 @@ module Onsi
 
     def flatten
       attributes.to_h.merge(relationships.to_h).with_indifferent_access
+    end
+
+    def require(key)
+      value = attributes.to_h.with_indifferent_access[key]
+      if value.nil?
+        raise MissingReqiredAttribute.new("Missing attribute #{key}", key)
+      end
+      value
     end
 
     def safe_fetch(key)
