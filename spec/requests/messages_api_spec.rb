@@ -3,7 +3,7 @@ require 'rails_helper'
 RSpec.describe 'Messages API', type: :request do
   let!(:person)   { Person.create! first_name: 'Test', last_name: 'Person' }
   let!(:email)    { person.emails.create(address: 'test@example.com') }
-  let!(:message)  { email.messages.create(sent_at: 1.hour.ago) }
+  let!(:message)  { email.messages.create(sent_at: 1.hour.ago, body: 'Test Message') }
 
   describe 'GET /api/v1/people/1/emails/1/messages' do
     before { get "/api/v1/people/#{person.id}/emails/#{email.id}/messages" }

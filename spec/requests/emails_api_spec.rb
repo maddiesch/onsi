@@ -24,7 +24,11 @@ RSpec.describe 'Emails API', type: :request do
   end
 
   describe 'GET /api/v1/people/1/emails/1' do
-    before { get "/api/v1/people/#{person.id}/emails/#{email.id}" }
+    before do
+      email.messages.create!(body: 'Message 1', sent_at: 2.hours.ago)
+      email.messages.create!(body: 'Message 2', sent_at: 1.hour.ago)
+      get "/api/v1/people/#{person.id}/emails/#{email.id}"
+    end
 
     subject { JSON.parse(response.body) }
 

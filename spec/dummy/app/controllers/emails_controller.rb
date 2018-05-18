@@ -9,7 +9,11 @@ class EmailsController < ApplicationController
 
   def show
     @person = Person.find(params[:person_id])
-    render_resource Onsi::Resource.new(@person.emails.find(params[:id]), params[:version].to_sym)
+    @email = @person.emails.find(params[:id])
+    @includes = Onsi::Includes.new('person,messages')
+    @includes.fetch_person { @person }
+    @includes.fetch_messages { @email.messages }
+    render_resource Onsi::Resource.new(@email, params[:version].to_sym, includes: @includes)
   end
 
   def create

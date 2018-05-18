@@ -15,6 +15,7 @@ ActiveRecord::Schema.define(version: 1) do
   end
 
   create_table 'messages', force: :cascade do |t|
+    t.string   'body',      limit: 32, null: false
     t.integer  'email_id',  limit: 4,  null: false
     t.datetime 'sent_at',              null: false
     t.datetime 'updated_at'
