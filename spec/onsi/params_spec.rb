@@ -66,7 +66,6 @@ RSpec.describe Onsi::Params do
     end
   end
 
-
   describe '#fetch' do
     subject { described_class.parse(params, [:name], %i[person access_tokens]) }
 
@@ -100,6 +99,29 @@ RSpec.describe Onsi::Params do
           subject.safe_fetch(:person_id) { |id| Person.find(id) }
         end.to raise_error Onsi::Params::RelationshipNotFound
       end
+    end
+  end
+
+  describe '#transform' do
+    subject { described_class.parse(params, %i[name]) }
+
+    it 'runs through the transform block' do
+      subject.transform(:name) { |name| "tested transform #{name}" }
+      expect(subject.flatten[:name]).to eq 'tested transform Skylar'
+    end
+  end
+
+  describe '#default' do
+    subject { described_class.parse(params, %i[name missing]) }
+
+    it 'runs through the default block' do
+      subject.default(:missing, -> { :foo })
+      expect(subject.flatten[:missing]).to eq :foo
+    end
+
+    it 'has the default value' do
+      subject.default(:missing, 'bar')
+      expect(subject.flatten[:missing]).to eq 'bar'
     end
   end
 end

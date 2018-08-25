@@ -1,6 +1,8 @@
 require 'active_support/concern'
 
 module Onsi
+  ##
+  # Handles default errors and builds JSON-API responses.
   module ErrorResponder
     extend ActiveSupport::Concern
 
@@ -99,6 +101,7 @@ module Onsi
       return nil unless Rails.configuration.consider_all_requests_local
       {
         exception: {
+          '_note' => '`exception` will be removed if Rails.configuration.consider_all_requests_local is false',
           class: error.class.name,
           message: error.message,
           backtrace: error.backtrace
