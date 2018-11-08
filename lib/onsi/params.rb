@@ -39,6 +39,13 @@ module Onsi
         new(attrs, relas)
       end
 
+      def parse_json(body, attributes = [], relationships = [])
+        content = body.respond_to?(:read) ? body.read : body
+        json = JSON.parse(content)
+        params = ActionController::Parameters.new(json)
+        parse(params, attributes, relationships)
+      end
+
       private
 
       def permit_attributes(data, attributes)

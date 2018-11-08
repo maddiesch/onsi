@@ -39,6 +39,45 @@ RSpec.describe Onsi::Params do
     end
   end
 
+  describe '.parse_json' do
+    context 'given valid params' do
+      let(:body) do
+        JSON.dump(
+          data: {
+            type: 'person',
+            attributes: {
+              name: 'Maddie'
+            },
+            relationships: {
+              person: {
+                data: {
+                  type: 'person',
+                  id: '7'
+                }
+              },
+            }
+          }
+        )
+      end
+
+      context 'given a raw string' do
+        subject { described_class.parse_json(body, %i[name], %i[person]) }
+
+        it { expect(subject.attributes).to eq('name' => 'Maddie') }
+
+        it { expect(subject.relationships).to eq(person_id: '7') }
+      end
+
+      context 'given a string io' do
+        subject { described_class.parse_json(StringIO.new(body), %i[name], %i[person]) }
+
+        it { expect(subject.attributes).to eq('name' => 'Maddie') }
+
+        it { expect(subject.relationships).to eq(person_id: '7') }
+      end
+    end
+  end
+
   describe '#flatten' do
     subject { described_class.parse(params, [:name], %i[person access_tokens]) }
 
