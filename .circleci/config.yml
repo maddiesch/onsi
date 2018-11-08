@@ -53,11 +53,11 @@ jobs:
       - run:
           name: install gems
           command: |
-            bundle install --jobs=4 --retry=3 --path vendor/bundle
+            bundle install --jobs=4 --retry=3 --path vendor/bundle-2_5
       - save_cache:
           key: v1-gems-build_2_5-{{ checksum "onsi.gemspec" }}
           paths:
-            - ./vendor/bundle
+            - ./vendor/bundle-2_5
       - run:
           name: Run Specs
           command: bundle exec rspec spec/**/*.rb
@@ -75,11 +75,11 @@ jobs:
       - run:
           name: install gems
           command: |
-            bundle install --jobs=4 --retry=3 --path vendor/bundle
+            bundle install --jobs=4 --retry=3 --path vendor/bundle-2_4
       - save_cache:
           key: v1-gems-build_2_4-{{ checksum "onsi.gemspec" }}
           paths:
-            - ./vendor/bundle
+            - ./vendor/bundle-2_4
       - run:
           name: Run Specs
           command: bundle exec rspec spec/**/*.rb
@@ -97,11 +97,11 @@ jobs:
       - run:
           name: install gems
           command: |
-            bundle install --jobs=4 --retry=3 --path vendor/bundle
+            bundle install --jobs=4 --retry=3 --path vendor/bundle-2_3
       - save_cache:
           key: v1-gems-build_2_3-{{ checksum "onsi.gemspec" }}
           paths:
-            - ./vendor/bundle
+            - ./vendor/bundle-2_3
       - run:
           name: Run Specs
           command: bundle exec rspec spec/**/*.rb
