@@ -19,6 +19,7 @@ module Onsi
         included.each do |name|
           fetcher = fetch_methods[name]
           next if fetcher.nil?
+
           results = fetcher.call
           root[name] = results
         end
@@ -35,6 +36,7 @@ module Onsi
       if block.nil?
         raise ArgumentError, "Must specify a block for fetch_#{name}"
       end
+
       fetch_methods[name.to_sym] = block
     end
 

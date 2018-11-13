@@ -37,6 +37,96 @@ RSpec.describe Onsi::Params do
 
       it { expect(subject.relationships).to eq(person_id: '7', access_token_ids: %w[1 2]) }
     end
+
+    context 'given an optional relationship and nil data' do
+      let(:params) do
+        ActionController::Parameters.new(
+          data: {
+            type: 'person',
+            attributes: {
+              name: 'Skylar',
+              foo: 'Bar'
+            },
+            relationships: {
+              person: {
+                data: nil
+              },
+              access_tokens: {
+                data: [
+                  { type: 'access_token', id: '1' },
+                  { type: 'access_token', id: '2' }
+                ]
+              }
+            }
+          }
+        )
+      end
+
+      subject { described_class.parse(params, %w[name], %w[?person access_tokens]) }
+
+      it { expect { subject }.to_not raise_error }
+
+      it { expect(subject.relationships).to eq(person_id: nil, access_token_ids: %w[1 2]) }
+    end
+
+    context 'given an optional relationship and empty array' do
+      let(:params) do
+        ActionController::Parameters.new(
+          data: {
+            type: 'person',
+            attributes: {
+              name: 'Skylar',
+              foo: 'Bar'
+            },
+            relationships: {
+              person: {
+                data: {
+                  type: 'person',
+                  id: '7'
+                }
+              },
+              access_tokens: {
+                data: []
+              }
+            }
+          }
+        )
+      end
+
+      subject { described_class.parse(params, [:name], %w[person ?access_tokens]) }
+
+      it { expect { subject }.to_not raise_error }
+
+      it { expect(subject.relationships).to eq(person_id: '7', access_token_ids: []) }
+    end
+
+    context 'given an expected key not in the body' do
+      let(:params) do
+        ActionController::Parameters.new(
+          data: {
+            type: 'person',
+            attributes: {
+              name: 'Skylar'
+            },
+            relationships: {
+              person: {
+                data: nil
+              },
+              access_tokens: {
+                data: [
+                  { type: 'access_token', id: '1' },
+                  { type: 'access_token', id: '2' }
+                ]
+              }
+            }
+          }
+        )
+      end
+
+      subject { described_class.parse(params, %w[name foo], %w[?person access_tokens]) }
+
+      it { expect { subject }.to_not raise_error }
+    end
   end
 
   describe '.parse_json' do

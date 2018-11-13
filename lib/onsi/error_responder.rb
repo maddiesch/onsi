@@ -91,6 +91,7 @@ module Onsi
 
     def error_metadata(error)
       return nil unless Rails.configuration.consider_all_requests_local
+
       {
         exception: {
           '_note' => '`exception` will be removed if Rails.configuration.consider_all_requests_local is false',

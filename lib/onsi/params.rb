@@ -50,26 +50,50 @@ module Onsi
 
       def permit_attributes(data, attributes)
         return {} if Array(attributes).empty?
+
         data.require(:attributes).permit(*attributes)
       end
 
       def permit_relationships(data, relationships)
         return {} if Array(relationships).empty?
+
         rels = data.require(:relationships)
         {}.tap do |obj|
           relationships.each do |name|
-            next if rels[name].nil?
-            resource = rels.require(name).require(:data)
+            optional, true_name = parse_relationship_name(name)
+            next unless rels.key?(true_name)
+
+            resource = fetch_relationship(rels, optional, true_name)
             case resource
+            when nil
+              obj["#{true_name}_id".to_sym] = nil
             when Array
               ids = resource.map { |r| parse_relationship(r).last }
-              obj["#{name.to_s.singularize}_ids".to_sym] = ids
+              obj["#{true_name.to_s.singularize}_ids".to_sym] = ids
             else
               _type, id = parse_relationship(resource)
-              obj["#{name}_id".to_sym] = id
+              obj["#{true_name}_id".to_sym] = id
             end
           end
         end
+      end
+
+      def fetch_relationship(rels, optional, name)
+        if optional
+          payload = rels.require(name).permit!.to_h
+          if payload[:data].is_a?(Array)
+            return []
+          end
+
+          nil
+        else
+          rels.require(name).require(:data)
+        end
+      end
+
+      def parse_relationship_name(name)
+        name = name.to_s
+        [name.start_with?('?'), name.gsub(/\A\?/, '')]
       end
 
       def parse_relationship(data)
@@ -108,6 +132,7 @@ module Onsi
       if value.nil?
         raise MissingReqiredAttribute.new("Missing attribute #{key}", key)
       end
+
       value
     end
 
@@ -180,6 +205,7 @@ module Onsi
       raw_attrs = attributes.to_h.symbolize_keys
       defaults.each_with_object({}) do |(key, value), object|
         next if raw_attrs.key?(key)
+
         if value.respond_to?(:call)
           object[key] = value.call
         else

@@ -5,12 +5,12 @@ require 'onsi/version'
 Gem::Specification.new do |spec|
   spec.name          = 'onsi'
   spec.version       = Onsi::VERSION
-  spec.authors       = ['Skylar Schipper']
-  spec.email         = ['me@skylarsch.com']
+  spec.authors       = ['Maddie Schipper']
+  spec.email         = ['me@maddiesch.com']
 
   spec.summary       = 'Format JSON API Responses'
   spec.description   = 'Format JSON API responses and parse inbound requests.'
-  spec.homepage      = 'https://github.com/skylarsch/onsi'
+  spec.homepage      = 'https://github.com/maddiesch/onsi'
   spec.license       = 'MIT'
 
   spec.files = `git ls-files -z`.split("\x0").reject do |f|

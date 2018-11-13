@@ -86,18 +86,21 @@ module Onsi
     def append_relationships(root)
       relationships = generate_relationships
       return unless relationships.any?
+
       root[RELATIONSHIPS_KEY] = relationships
     end
 
     def append_meta(root)
       meta = generate_metadata
       return unless meta.any?
+
       root[META_KEY] = meta
     end
 
     def append_includes(root)
       includes = generate_includes
       return unless includes.any?
+
       root[RELATIONSHIPS_KEY] ||= {}
       root[RELATIONSHIPS_KEY].merge!(includes)
     end
