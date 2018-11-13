@@ -2,12 +2,11 @@ require 'active_support/concern'
 
 module Onsi
   ##
-  # Handles default errors and builds JSON-API responses.
-  module ErrorResponder
+  # Handles default errors without StandardError
+  module ErrorResponderBase
     extend ActiveSupport::Concern
 
     included do
-      rescue_from StandardError,                         with: :render_error_500
       rescue_from ActiveRecord::RecordNotFound,          with: :render_error_404
       rescue_from ActiveRecord::RecordInvalid,           with: :render_error_422
       rescue_from ActionController::ParameterMissing,    with: :respond_param_error_400
@@ -18,13 +17,6 @@ module Onsi
 
     def render_error(response)
       render(response.renderable)
-    end
-
-    def render_error_500(error)
-      notify_unhandled_exception(error)
-      response = ErrorResponse.new(500)
-      response.add(500, 'internal_server_error', meta: error_metadata(error))
-      render_error(response)
     end
 
     def render_error_404(_error)
@@ -137,6 +129,26 @@ module Onsi
         json:   as_json,
         status: status
       }
+    end
+  end
+end
+
+module Onsi
+  ##
+  # Handles default errors and builds JSON-API responses.
+  module ErrorResponder
+    extend ActiveSupport::Concern
+
+    included do
+      rescue_from StandardError, with: :render_error_500
+      include(Onsi::ErrorResponderBase)
+    end
+
+    def render_error_500(error)
+      notify_unhandled_exception(error)
+      response = ErrorResponse.new(500)
+      response.add(500, 'internal_server_error', meta: error_metadata(error))
+      render_error(response)
     end
   end
 end
