@@ -2,7 +2,7 @@ version: 2
 jobs:
   latest:
     environment:
-      CC_TEST_REPORTER_ID: 15f1ab72e4d38e92cc8ffe4490022ae9bdc9265a0319c30e673ee3e4e7a5a371
+      CC_TEST_REPORTER_ID: 7e6c6740d17509f50ec9c750311962b3b3fcb2d3a7033c2f664dc3b012bd9439
     docker:
       - image: circleci/ruby:latest
     working_directory: ~/repo
