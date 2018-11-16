@@ -4,4 +4,4 @@ engines:
   rubocop:
     enabled: true
   bundler-audit:
-    enabled: true
+    enabled: false
