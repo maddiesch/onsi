@@ -3,34 +3,57 @@ module Onsi
   # Used to handle parsing JSON-API formated params
   class Params
     ##
-    # Raised when using `Params#safe_fetch`
+    # Raised when a safe_fetch fails.
     #
-    # The ErrorResponder will rescue from this and return an appropriate
-    # error to the user
+    # @note The ErrorResponder will rescue from this and return an appropriate
+    #   error to the user
     class RelationshipNotFound < StandardError
+      ##
+      # The key that the relationship wasn't found for
+      #
+      # @return [String]
       attr_reader :key
 
+      ##
+      # @private
       def initialize(message, key)
         super(message)
-        @key = key
+        @key = key.to_s
       end
     end
 
     ##
     # Raised when a required attribute has a nil value. `Params#require`
     #
-    # The ErrorResponder will rescue from this and return an appropriate
-    # error to the user
+    # @note The ErrorResponder will rescue from this and return an appropriate
+    #   error to the user
     class MissingReqiredAttribute < StandardError
+      ##
+      # The attribute that was missing when required.
+      #
+      # @return [String]
       attr_reader :attribute
 
+      ##
+      # @private
       def initialize(message, attr)
         super(message)
-        @attribute = attr
+        @attribute = attr.to_s
       end
     end
 
     class << self
+      ##
+      # Parse a JSON-API formatted params object.
+      #
+      # @param params [ActionController::Parameters] The parameters to parse.
+      #
+      # @param attributes [Array<String, Symbol>] The whitelisted attributes.
+      #
+      # @param relationships [Array<String, Symbol>] The whitelisted relationships.
+      #   Should be the key for the relationships name.
+      #
+      # @return [Params] The new params object.
       def parse(params, attributes = [], relationships = [])
         data = params.require(:data)
         data.require(:type)
@@ -39,6 +62,17 @@ module Onsi
         new(attrs, relas)
       end
 
+      ##
+      # Parse a JSON-API formatted JSON object.
+      #
+      # @param params [String, #read] The parameters to parse.
+      #
+      # @param attributes [Array<String, Symbol>] The whitelisted attributes.
+      #
+      # @param relationships [Array<String, Symbol>] The whitelisted relationships.
+      #   Should be the key for the relationships name.
+      #
+      # @return [Params] The new params object.
       def parse_json(body, attributes = [], relationships = [])
         content = body.respond_to?(:read) ? body.read : body
         json = JSON.parse(content)
@@ -104,8 +138,28 @@ module Onsi
       end
     end
 
-    attr_reader :attributes, :relationships
+    ##
+    # The attributes for the params.
+    #
+    # @return [ActionController::Parameters]
+    attr_reader :attributes
 
+    ##
+    # The relationships for the params.
+    #
+    # @return [Hash]
+    attr_reader :relationships
+
+    ##
+    # Create a new Params instance.
+    #
+    # @param attributes [ActionController::Parameters] The attributes
+    #
+    # @param relationships [Hash] Flattened relationships hash
+    #
+    # @note Should not be created directly. Use .parse or .parse_json
+    #
+    # @private
     def initialize(attributes, relationships)
       @attributes = attributes
       @relationships = relationships
@@ -113,12 +167,20 @@ module Onsi
 
     ##
     # Flatten an merge the attributes & relationships into one hash.
+    #
+    # @return [Hash] The flattened attributes and relationships
     def flatten
       attrs_hash.to_h.merge(relationships.to_h).with_indifferent_access
     end
 
     ##
     # Fetch a value from the attributes or return the passed default value
+    #
+    # @param key [String, Symbol] The key to fetch.
+    #
+    # @param default [Any] The default value if the attribute doesn't exist.
+    #
+    # @return [Any]
     def fetch(key, default = nil)
       attrs_hash[key] || default
     end
@@ -126,7 +188,11 @@ module Onsi
     ##
     # Make an attributes key required.
     #
-    # Throws MissingReqiredAttribute if the value is nil
+    # @param key [String, Symbol] The key of the attribute to require.
+    #
+    # @raise [MissingReqiredAttribute] The value you have required isn't present
+    #
+    # @return [Any] The value for the attribute
     def require(key)
       value = attrs_hash[key]
       if value.nil?
@@ -137,14 +203,19 @@ module Onsi
     end
 
     ##
-    # Handle finding a relationship's object
+    # Handle finding a relationship's object.
     #
-    # If an ActiveRecord::RecordNotFound is raised, a RelationshipNotFound error will
-    # be raised so the ErrorResponder can build an appropriate error message
+    # @param key [String, Symbol] The key for the relationship
     #
-    # params.safe_fetch(:person) do |id|
-    #   Person.find(id)
-    # end
+    # @raise [RelationshipNotFound] Thrown instead of an `ActiveRecord::RecordNotFound`
+    #   This allows the `Onsi::ErrorResponder` to build an appropriate response.
+    #
+    # @example
+    #   params.safe_fetch(:person) do |id|
+    #     Person.find(id)
+    #   end
+    #
+    # @return [Any]
     def safe_fetch(key)
       yield(@relationships[key])
     rescue ActiveRecord::RecordNotFound
@@ -156,21 +227,36 @@ module Onsi
     #
     # Any getter will run the value through the transform block.
     #
-    # (The values are memoized)
+    # @param key [String, Symbol] The key to transform.
     #
-    # `params.transform(:date) { |date| Time.parse(date) }`
+    # @param block [Block] The block to perform the transform.
+    #
+    # @note The values are memoized
+    #
+    # @example
+    #   params.transform(:date) { |date| Time.parse(date) }
+    #
+    # @return [Any]
     def transform(key, &block)
       @attrs_hash = nil
       transforms[key.to_sym] = block
     end
 
     ##
-    # Set a default value.
+    # Set a default value for attributes.
     #
     # This value will only be used if the key is missing from the passed attributes
     #
-    # Can take any object. If the object responds to call (Lambda) it will be called when
-    # parsing attributes
+    # @param key [String, Symbol] The key to set a default on.
+    #
+    # @param value [Any, #call] The default value.
+    #   If the object responds to call (Lambda) it will be called when
+    #   parsing attributes
+    #
+    # @example
+    #   params.default(:missing, -> { :foo })
+    #   subject.flatten[:missing]
+    #   # => :foo
     def default(key, value)
       @attrs_hash = nil
       defaults[key.to_sym] = value

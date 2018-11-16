@@ -1,14 +1,55 @@
 module Onsi
+  ##
+  # The wrapper for generating a object
+  #
+  # @author Maddie Schipper
+  # @since 1.0.0
   class Resource
-    attr_reader :object, :version, :includes
+    attr_reader :object
+    attr_reader :version
+    attr_reader :includes
 
-    TYPE_KEY          = 'type'.freeze
-    ID_KEY            = 'id'.freeze
-    ATTRIBUTES_KEY    = 'attributes'.freeze
+    ##
+    # Root object type key
+    #
+    # @private
+    TYPE_KEY = 'type'.freeze
+
+    ##
+    # Root object id key
+    #
+    # @private
+    ID_KEY = 'id'.freeze
+
+    ##
+    # Root object attributes key
+    #
+    # @private
+    ATTRIBUTES_KEY = 'attributes'.freeze
+
+    ##
+    # Root object relationships key
+    #
+    # @private
     RELATIONSHIPS_KEY = 'relationships'.freeze
-    META_KEY          = 'meta'.freeze
-    DATA_KEY          = 'data'.freeze
-    INCLUDED_KEY      = 'included'.freeze
+
+    ##
+    # Root object meta key
+    #
+    # @private
+    META_KEY = 'meta'.freeze
+
+    ##
+    # Root object data key
+    #
+    # @private
+    DATA_KEY = 'data'.freeze
+
+    ##
+    # Root object included key
+    #
+    # @private
+    INCLUDED_KEY = 'included'.freeze
 
     class InvalidResourceError < StandardError; end
 
