@@ -15,4 +15,11 @@ RSpec.describe Onsi::Includes do
     it { expect { subject.foo }.to raise_error NoMethodError }
     it { expect { subject.fetch_foo }.to raise_error ArgumentError }
   end
+
+  describe '#respond_to_missing?' do
+    subject { described_class.new(nil) }
+
+    it { expect(subject.respond_to?(:foo)).to eq false }
+    it { expect(subject.respond_to?(:fetch_foo)).to eq true }
+  end
 end
