@@ -1,17 +1,38 @@
 module Onsi
+  ##
+  # Container module for custom errors
   module Errors
+    ##
+    # Base Error for all Onsi custom errors
+    #
+    # @author Maddie Schipper
+    # @since 1.0.0
     class BaseError < StandardError; end
 
+    ##
+    # An unknown version is requested to be rendered
+    #
+    # @author Maddie Schipper
+    # @since 1.0.0
     class UnknownVersionError < BaseError
-      attr_reader :klass, :version
+      ##
+      # The class that does not support the requested version.
+      attr_reader :klass
 
+      ##
+      # The version requested that isn't supported
+      attr_reader :version
+
+      ##
+      # Create a new UnknownVersionError
+      #
+      # @param klass (see #klass)
+      #
+      # @param version (see #version)
       def initialize(klass, version)
+        super("Unsupported version #{version} for #{klass.name}")
         @klass = klass
         @version = version
-      end
-
-      def message
-        "Unsupported version #{version} for #{klass.name}"
       end
     end
   end

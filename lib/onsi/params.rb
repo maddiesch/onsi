@@ -1,13 +1,29 @@
+require_relative 'errors'
+
 module Onsi
   ##
   # Used to handle parsing JSON-API formated params
+  #
+  # @example
+  #   class PeopleController < ApplicationController
+  #     include Onsi::Controller
+  #
+  #     def create
+  #       attributes = Onsi::Param.parse(
+  #         params,
+  #         [:first_name, :last_name],
+  #         [:team]
+  #       )
+  #       render_resource Person.create!(attributes.flatten)
+  #     end
+  #   end
   class Params
     ##
     # Raised when a safe_fetch fails.
     #
     # @note The ErrorResponder will rescue from this and return an appropriate
     #   error to the user
-    class RelationshipNotFound < StandardError
+    class RelationshipNotFound < Onsi::Errors::BaseError
       ##
       # The key that the relationship wasn't found for
       #
@@ -27,7 +43,7 @@ module Onsi
     #
     # @note The ErrorResponder will rescue from this and return an appropriate
     #   error to the user
-    class MissingReqiredAttribute < StandardError
+    class MissingReqiredAttribute < Onsi::Errors::BaseError
       ##
       # The attribute that was missing when required.
       #
@@ -65,14 +81,14 @@ module Onsi
       ##
       # Parse a JSON-API formatted JSON object.
       #
-      # @param params [String, #read] The parameters to parse.
+      # @param body [String, #read] The parameters to parse.
       #
       # @param attributes [Array<String, Symbol>] The whitelisted attributes.
       #
       # @param relationships [Array<String, Symbol>] The whitelisted relationships.
       #   Should be the key for the relationships name.
       #
-      # @return [Params] The new params object.
+      # @return [Onsi::Params] The new params object.
       def parse_json(body, attributes = [], relationships = [])
         content = body.respond_to?(:read) ? body.read : body
         json = JSON.parse(content)

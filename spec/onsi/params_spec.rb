@@ -190,7 +190,7 @@ RSpec.describe Onsi::Params do
 
     it 'raises on missing key' do
       expect { subject.require(:missing) }.to raise_error Onsi::Params::MissingReqiredAttribute do |err|
-        expect(err.attribute).to eq :missing
+        expect(err.attribute).to eq 'missing'
       end
     end
   end

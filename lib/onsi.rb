@@ -7,5 +7,7 @@ require 'onsi/params'
 require 'onsi/resource'
 require 'onsi/version'
 
+##
+# Create versioned JSON-API objects.
 module Onsi
 end
