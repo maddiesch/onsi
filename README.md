@@ -2,6 +2,8 @@
 
 Used to generate API responses from a Rails App.
 
+[Documentation](https://www.rubydoc.info/gems/onsi)
+
 ***
 
 [![CircleCI](https://circleci.com/gh/maddiesch/onsi.svg?style=svg)](https://circleci.com/gh/maddiesch/onsi)
