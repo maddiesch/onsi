@@ -10,7 +10,7 @@ Onsi uses [RSpec](http://rspec.info) for unit tests. Please make sure any code y
 
 ## Documentation
 
-Onsi uses [yard](https://yardoc.org) for documentation generate. Please make sure any code you add is properly documented.
+Onsi uses [yard](https://yardoc.org) for documentation generation. Please make sure any code you add is properly documented.
 
 #### Before opening a PR
 
