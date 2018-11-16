@@ -32,4 +32,5 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency 'rspec-rails',      '~> 3.7.2'
   spec.add_development_dependency 'simplecov',        '~> 0.15'
   spec.add_development_dependency 'sqlite3',          '~> 1.3.10'
+  spec.add_development_dependency 'yard',             '~> 0.9.16'
 end
