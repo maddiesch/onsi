@@ -1,5 +1,13 @@
 Write code. Open a Pull Request ;)
 
+Okay. So there's a bit more to it than that.
+
+The best way to get started is checking out any good ['Starter Issues'](https://github.com/maddiesch/onsi/issues?q=is%3Aopen+is%3Aissue+label%3AStarter)
+
+## Testing
+
+Onsi uses [RSpec](http://rspec.info) for unit tests. Please make sure any code you add is properly tested.
+
 ## Documentation
 
 Onsi uses [yard](https://yardoc.org) for documentation generate. Please make sure any code you add is properly documented.
