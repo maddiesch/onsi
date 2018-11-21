@@ -101,7 +101,9 @@ module Onsi
       def permit_attributes(data, attributes)
         return {} if Array(attributes).empty?
 
-        data.require(:attributes).permit(*attributes)
+        normalized_attributes = attributes.map(&:to_sym)
+
+        data.require(:attributes).permit!.to_h.select { |k, _| normalized_attributes.include?(k.to_sym) }
       end
 
       def permit_relationships(data, relationships)
