@@ -6,8 +6,12 @@ RSpec.describe Onsi::Params do
       data: {
         type: 'person',
         attributes: {
-          name: 'Skylar',
-          foo: 'Bar'
+          name: 'Madison',
+          foo: 'Bar',
+          nicknames: [
+            'Maddie',
+            'Mads'
+          ]
         },
         relationships: {
           person: {
@@ -29,11 +33,11 @@ RSpec.describe Onsi::Params do
 
   describe '.parse' do
     context 'given valid params' do
-      subject { described_class.parse(params, [:name], %i[person access_tokens]) }
+      subject { described_class.parse(params, %i[name nicknames], %i[person access_tokens]) }
 
       it { expect { subject }.to_not raise_error }
 
-      it { expect(subject.attributes).to eq('name' => 'Skylar') }
+      it { expect(subject.attributes).to eq('name' => 'Madison', 'nicknames' => %w[Maddie Mads]) }
 
       it { expect(subject.relationships).to eq(person_id: '7', access_token_ids: %w[1 2]) }
     end
@@ -44,7 +48,7 @@ RSpec.describe Onsi::Params do
           data: {
             type: 'person',
             attributes: {
-              name: 'Skylar',
+              name: 'Maddie',
               foo: 'Bar'
             },
             relationships: {
@@ -75,7 +79,7 @@ RSpec.describe Onsi::Params do
           data: {
             type: 'person',
             attributes: {
-              name: 'Skylar',
+              name: 'Maddie',
               foo: 'Bar'
             },
             relationships: {
@@ -106,7 +110,7 @@ RSpec.describe Onsi::Params do
           data: {
             type: 'person',
             attributes: {
-              name: 'Skylar'
+              name: 'Maddie'
             },
             relationships: {
               person: {
@@ -173,7 +177,7 @@ RSpec.describe Onsi::Params do
 
     it 'merges attributes & relationships' do
       expect(subject.flatten).to eq(
-        'name' => 'Skylar',
+        'name' => 'Madison',
         'person_id' => '7',
         'access_token_ids' => %w[1 2]
       )
@@ -184,8 +188,8 @@ RSpec.describe Onsi::Params do
     subject { described_class.parse(params, [:name], %i[person access_tokens]) }
 
     it 'returns a valid attribute' do
-      expect(subject.require(:name)).to eq 'Skylar'
-      expect(subject.require('name')).to eq 'Skylar'
+      expect(subject.require(:name)).to eq 'Madison'
+      expect(subject.require('name')).to eq 'Madison'
     end
 
     it 'raises on missing key' do
@@ -199,7 +203,7 @@ RSpec.describe Onsi::Params do
     subject { described_class.parse(params, [:name], %i[person access_tokens]) }
 
     it 'returns a valid attribute' do
-      expect(subject.fetch(:name)).to eq 'Skylar'
+      expect(subject.fetch(:name)).to eq 'Madison'
     end
 
     it 'returns nil' do
@@ -236,7 +240,7 @@ RSpec.describe Onsi::Params do
 
     it 'runs through the transform block' do
       subject.transform(:name) { |name| "tested transform #{name}" }
-      expect(subject.flatten[:name]).to eq 'tested transform Skylar'
+      expect(subject.flatten[:name]).to eq 'tested transform Madison'
     end
   end
 

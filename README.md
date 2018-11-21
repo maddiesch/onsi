@@ -89,7 +89,7 @@ Calling `#flatten` will merge the attributes & relationships.
   "data": {
     "type": "person",
     "attributes": {
-      "first_name": "Skylar",
+      "first_name": "Maddie",
       "last_name": "Schipper",
       "bad_value": "'); DROP TABLE `people`; --"
     },
@@ -113,7 +113,7 @@ Calling `#flatten` will merge the attributes & relationships.
 Flattened gives you:
 
 ```ruby
-{ "first_name" => "Skylar", "last_name" => "Schipper", "team_id" => "1" }
+{ "first_name" => "Maddie", "last_name" => "Schipper", "team_id" => "1" }
 ```
 
 ```ruby

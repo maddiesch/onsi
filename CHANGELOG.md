@@ -1,3 +1,11 @@
+# Version 1.0.1
+
+## Released November 21, 2018
+
+### Changes
+
+- Fix for nested complex attributes.
+
 # Version 1.0.0
 
 ## Released November 15, 2018
