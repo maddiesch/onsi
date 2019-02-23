@@ -237,7 +237,7 @@ module Onsi
               subobj[DATA_KEY] = included.map do |inc|
                 {
                   TYPE_KEY => inc[TYPE_KEY],
-                  ID_KEY   => inc[ID_KEY]
+                  ID_KEY => inc[ID_KEY]
                 }
               end
             end

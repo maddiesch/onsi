@@ -1,3 +1,11 @@
+# Version 1.1.0
+
+## pending release
+
+### Changes
+
+- Feat: Add CORS headers helpers.
+
 # Version 1.0.1
 
 ## Released November 21, 2018

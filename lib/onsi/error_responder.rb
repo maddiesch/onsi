@@ -221,7 +221,7 @@ module Onsi
     # @private
     def renderable
       {
-        json:   as_json,
+        json: as_json,
         status: status
       }
     end
