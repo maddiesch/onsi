@@ -11,6 +11,7 @@ module Onsi
   # - {Onsi::Params::MissingReqiredAttribute}
   # - {Onsi::Params::RelationshipNotFound}
   # - {Onsi::Errors::UnknownVersionError}
+  # - {Onsi::Errors::IncludedParamError}
   #
   # @example
   #   class PeopleController < ApplicationController
@@ -32,6 +33,7 @@ module Onsi
       rescue_from Onsi::Params::MissingReqiredAttribute, with: :respond_missing_attr_error_400
       rescue_from Onsi::Params::RelationshipNotFound,    with: :respond_missing_relationship_error_400
       rescue_from Onsi::Errors::UnknownVersionError,     with: :respond_invalid_version_error_400
+      rescue_from Onsi::Errors::IncludedParamError,      with: :respond_included_param_error_400
     end
 
     ##
@@ -96,6 +98,19 @@ module Onsi
         400,
         'missing_parameter',
         meta: { param: error.param }
+      )
+      render_error(response)
+    end
+
+    ##
+    # @private
+    def respond_included_param_error_400(error)
+      response = ErrorResponse.new(400)
+      response.add(
+        400,
+        'missing_include',
+        details: error.message,
+        meta: { source: error.path }
       )
       render_error(response)
     end

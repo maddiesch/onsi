@@ -35,5 +35,25 @@ module Onsi
         @version = version
       end
     end
+
+    ##
+    # Included Param Error
+    #
+    # @author Maddie Schipper
+    # @since 1.1.0
+    class IncludedParamError < BaseError
+      ##
+      # The path that failed to parse.
+      attr_reader :path
+
+      ##
+      # @private
+      #
+      # Create a new IncludedParamError
+      def initialize(message, path)
+        super(message)
+        @path = path
+      end
+    end
   end
 end

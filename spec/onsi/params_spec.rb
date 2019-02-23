@@ -73,6 +73,178 @@ RSpec.describe Onsi::Params do
       it { expect(subject.relationships).to eq(person_id: nil, access_token_ids: %w[1 2]) }
     end
 
+    context 'given included relationship data' do
+      let(:params) do
+        ActionController::Parameters.new(
+          data: {
+            type: 'person',
+            attributes: {
+              name: 'Maddie'
+            },
+            relationships: {
+              organization: {
+                data: {
+                  type: 'organization',
+                  id: '1'
+                }
+              },
+              email: {
+                data: {
+                  source: '/included/email/1'
+                }
+              },
+              phone_number: {
+                data: {
+                  source: '/included/phone_number'
+                }
+              },
+              comment: {
+                data: {
+                  source: '/included/comment/*'
+                }
+              }
+            }
+          },
+          included: [
+            {
+              type: 'email',
+              id: '1',
+              attributes: {
+                address: 'test@example.test'
+              }
+            },
+            {
+              type: 'email',
+              id: '2',
+              attributes: {
+                address: 'comment-email@example.test'
+              }
+            },
+            {
+              type: 'phone_number',
+              attributes: {
+                number: '(123) 555-1234'
+              }
+            },
+            {
+              type: 'comment',
+              id: '1',
+              attributes: {
+                content: 'Comment One'
+              },
+              relationships: {
+                post: {
+                  data: {
+                    type: 'post',
+                    id: '1'
+                  }
+                },
+                email: {
+                  data: {
+                    source: '/included/email/2'
+                  }
+                }
+              }
+            },
+            {
+              type: 'comment',
+              id: '2',
+              attributes: {
+                content: 'Comment Two'
+              },
+              relationships: {
+                post: {
+                  data: {
+                    type: 'post',
+                    id: '2'
+                  }
+                }
+              }
+            }
+          ]
+        )
+      end
+
+      let(:relationships) do
+        [
+          :organization,
+          {
+            email: [:address],
+            phone_number: [:number]
+          },
+          {
+            comment: [
+              :content,
+              {
+                relationships: [:post]
+              },
+              {
+                relationships: [
+                  { email: [:address] }
+                ]
+              }
+            ]
+          }
+        ]
+      end
+
+      subject { described_class.parse(params, %w[name], relationships) }
+
+      it { expect { subject }.to_not raise_error }
+
+      it { expect(subject.flatten.dig('email', 'address')).to eq 'test@example.test' }
+
+      it { expect(subject.flatten.dig('phone_number', 'number')).to eq '(123) 555-1234' }
+
+      it { expect(subject.flatten.dig('organization_id')).to eq '1' }
+
+      it { expect(subject.flatten.dig('comment', '1', 'content')).to eq 'Comment One' }
+
+      it { expect(subject.flatten.dig('comment', '1', 'post_id')).to eq '1' }
+
+      it { expect(subject.flatten.dig('comment', '1', 'email', 'address')).to eq 'comment-email@example.test' }
+
+      it { expect(subject.flatten.dig('comment', '2', 'content')).to eq 'Comment Two' }
+
+      it { expect(subject.flatten.dig('comment', '2', 'post_id')).to eq '2' }
+
+      it { expect(subject.flatten.dig('comment', '2', 'email', 'address')).to be_nil }
+    end
+
+    context 'given an invalid relationships' do
+      let(:params) do
+        ActionController::Parameters.new(
+          data: {
+            type: 'person',
+            attributes: {
+              name: 'Maddie'
+            },
+            relationships: {
+              person: {
+                data: {
+                  type: 'person',
+                  id: '7'
+                }
+              }
+            }
+          }
+        )
+      end
+
+      let(:relationships) do
+        [
+          :person,
+          123
+        ]
+      end
+
+      it 'raises an error for invalid relationships' do
+        expect { described_class.parse(params, [], relationships) }.to raise_error(ArgumentError) do |error|
+          expect(error.message).to eq 'Unexpected type for relationship 123'
+        end
+      end
+    end
+
     context 'given an optional relationship and empty array' do
       let(:params) do
         ActionController::Parameters.new(

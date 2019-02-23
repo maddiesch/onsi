@@ -1,4 +1,5 @@
 require_relative 'errors'
+require_relative 'params_parser'
 
 module Onsi
   ##
@@ -71,11 +72,12 @@ module Onsi
       #
       # @return [Params] The new params object.
       def parse(params, attributes = [], relationships = [])
-        data = params.require(:data)
-        data.require(:type)
-        attrs = permit_attributes(data, attributes)
-        relas = permit_relationships(data, relationships)
-        new(attrs, relas)
+        parser = Onsi::ParamsParser.new(params, attributes, relationships)
+        results = parser.parse!
+        new(
+          results.attributes,
+          results.relationships
+        )
       end
 
       ##
@@ -94,65 +96,6 @@ module Onsi
         json = JSON.parse(content)
         params = ActionController::Parameters.new(json)
         parse(params, attributes, relationships)
-      end
-
-      private
-
-      def permit_attributes(data, attributes)
-        return {} if Array(attributes).empty?
-
-        normalized_attributes = attributes.map(&:to_sym)
-
-        data.require(:attributes).permit!.to_h.select { |k, _| normalized_attributes.include?(k.to_sym) }
-      end
-
-      def permit_relationships(data, relationships)
-        return {} if Array(relationships).empty?
-
-        rels = data.require(:relationships)
-        {}.tap do |obj|
-          relationships.each do |name|
-            optional, true_name = parse_relationship_name(name)
-            next unless rels.key?(true_name)
-
-            resource = fetch_relationship(rels, optional, true_name)
-            case resource
-            when nil
-              obj["#{true_name}_id".to_sym] = nil
-            when Array
-              ids = resource.map { |r| parse_relationship(r).last }
-              obj["#{true_name.to_s.singularize}_ids".to_sym] = ids
-            else
-              _type, id = parse_relationship(resource)
-              obj["#{true_name}_id".to_sym] = id
-            end
-          end
-        end
-      end
-
-      def fetch_relationship(rels, optional, name)
-        if optional
-          payload = rels.require(name).permit!.to_h
-          if payload[:data].is_a?(Array)
-            return []
-          end
-
-          nil
-        else
-          rels.require(name).require(:data)
-        end
-      end
-
-      def parse_relationship_name(name)
-        name = name.to_s
-        [name.start_with?('?'), name.gsub(/\A\?/, '')]
-      end
-
-      def parse_relationship(data)
-        [
-          data.require(:type),
-          data.require(:id)
-        ]
       end
     end
 
@@ -188,7 +131,7 @@ module Onsi
     #
     # @return [Hash] The flattened attributes and relationships
     def flatten
-      attrs_hash.to_h.merge(relationships.to_h).with_indifferent_access
+      @flattened ||= attrs_hash.to_h.merge(relationships.to_h).with_indifferent_access
     end
 
     ##
@@ -215,6 +158,15 @@ module Onsi
       value = attrs_hash[key]
       if value.nil?
         raise MissingReqiredAttribute.new("Missing attribute #{key}", key)
+      end
+
+      value
+    end
+
+    def require_path(key_path)
+      value = flatten.dig(*key_path.split('/'))
+      if value.nil?
+        raise MissingReqiredAttribute.new("Missing attribute at key_path #{key_path}", key_path)
       end
 
       value
