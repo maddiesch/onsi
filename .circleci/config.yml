@@ -46,7 +46,6 @@ jobs:
     working_directory: ~/repo
     steps:
       - checkout
-      - run: gem update --system
       - run: gem install bundler
       - restore_cache:
           keys:
@@ -70,8 +69,7 @@ jobs:
     working_directory: ~/repo
     steps:
       - checkout
-      - run: gem update --system
-      - run: gem install bundler
+      - run: gem install bundler -v 1.17.1
       - restore_cache:
           keys:
             - v1-gems-build_2_4-{{ .Branch }}-{{ .Revision }}
@@ -94,8 +92,7 @@ jobs:
     working_directory: ~/repo
     steps:
       - checkout
-      - run: gem update --system
-      - run: gem install bundler
+      - run: gem install bundler -v 1.17.1
       - restore_cache:
           keys:
             - v1-gems-build_2_3-{{ .Branch }}-{{ .Revision }}
