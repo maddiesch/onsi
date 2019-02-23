@@ -1,10 +1,12 @@
 # Version 1.1.0
 
-## pending release
+## Released February 23, 2019
 
 ### Changes
 
 - Feat: Add CORS headers helpers.
+
+- Feat: Allow Params to parse included relationships
 
 # Version 1.0.1
 
