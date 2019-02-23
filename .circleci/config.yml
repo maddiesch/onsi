@@ -19,16 +19,17 @@ jobs:
       - run: gem install bundler
       - restore_cache:
           keys:
-            - v1-gems-latest-{{ checksum "onsi.gemspec" }}
+            - v1-gems-latest-{{ .Branch }}-{{ .Revision }}
+            - v1-gems-latest-{{ .Branch }}
             - v1-gems-latest-
       - run:
           name: install gems
           command: |
-            bundle install --jobs=4 --retry=3 --path vendor/bundle
+            bundle install --jobs=4 --retry=3 --path vendor/bundle-latest
       - save_cache:
-          key: v1-gems-latest-{{ checksum "onsi.gemspec" }}
+          key: v1-gems-latest-{{ .Branch }}-{{ .Revision }}
           paths:
-            - ./vendor/bundle
+            - ./vendor/bundle-latest
       - run:
           name: Run Specs
           command: bundle exec rspec spec/**/*.rb
@@ -48,14 +49,15 @@ jobs:
       - run: gem install bundler
       - restore_cache:
           keys:
-            - v1-gems-build_2_5-{{ checksum "onsi.gemspec" }}
+            - v1-gems-build_2_5-{{ .Branch }}-{{ .Revision }}
+            - v1-gems-build_2_5-{{ .Branch }}
             - v1-gems-build_2_5-
       - run:
           name: install gems
           command: |
             bundle install --jobs=4 --retry=3 --path vendor/bundle-2_5
       - save_cache:
-          key: v1-gems-build_2_5-{{ checksum "onsi.gemspec" }}
+          key: v1-gems-build_2_5-{{ .Branch }}-{{ .Revision }}
           paths:
             - ./vendor/bundle-2_5
       - run:
@@ -70,14 +72,15 @@ jobs:
       - run: gem install bundler
       - restore_cache:
           keys:
-            - v1-gems-build_2_4-{{ checksum "onsi.gemspec" }}
+            - v1-gems-build_2_4-{{ .Branch }}-{{ .Revision }}
+            - v1-gems-build_2_4-{{ .Branch }}
             - v1-gems-build_2_4-
       - run:
           name: install gems
           command: |
             bundle install --jobs=4 --retry=3 --path vendor/bundle-2_4
       - save_cache:
-          key: v1-gems-build_2_4-{{ checksum "onsi.gemspec" }}
+          key: v1-gems-build_2_4-{{ .Branch }}-{{ .Revision }}
           paths:
             - ./vendor/bundle-2_4
       - run:
@@ -92,14 +95,15 @@ jobs:
       - run: gem install bundler
       - restore_cache:
           keys:
-            - v1-gems-build_2_3-{{ checksum "onsi.gemspec" }}
+            - v1-gems-build_2_3-{{ .Branch }}-{{ .Revision }}
+            - v1-gems-build_2_3-{{ .Branch }}
             - v1-gems-build_2_3-
       - run:
           name: install gems
           command: |
             bundle install --jobs=4 --retry=3 --path vendor/bundle-2_3
       - save_cache:
-          key: v1-gems-build_2_3-{{ checksum "onsi.gemspec" }}
+          key: v1-gems-build_2_3-{{ .Branch }}-{{ .Revision }}
           paths:
             - ./vendor/bundle-2_3
       - run:
