@@ -1,3 +1,13 @@
+# Version 1.2.2
+
+## Released February 23, 2019
+
+###
+
+- Feat: Allow passing in a metadata object to `#render_resource`.
+
+---
+
 # Version 1.2.1
 
 ## Released February 23, 2019

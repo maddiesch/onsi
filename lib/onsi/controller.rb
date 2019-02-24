@@ -49,8 +49,10 @@ module Onsi
     #
     #   - The other keys for opts will be passed directly the #render method.
     def render_resource(resource, opts = {})
+      metadata = opts.delete(:meta)
       version = opts.delete(:version) || self.class.render_version || Model::DEFAULT_API_VERSION
       payload = Resource.render(resource, version)
+      payload[Resource::META_KEY].merge!(metadata) if metadata
       render_options = {}
       render_options[:json] = payload
       render_options.merge!(opts)

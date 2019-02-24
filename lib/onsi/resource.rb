@@ -32,16 +32,16 @@ module Onsi
     RELATIONSHIPS_KEY = 'relationships'.freeze
 
     ##
-    # Root object meta key
-    #
-    # @private
-    META_KEY = 'meta'.freeze
-
-    ##
     # Root object data key
     #
     # @private
     DATA_KEY = 'data'.freeze
+
+    ##
+    # Metadata key
+    #
+    # @private
+    META_KEY = 'meta'.freeze
 
     ##
     # Root object included key
@@ -94,6 +94,9 @@ module Onsi
           included = all_included(resources)
           if included.any?
             root[INCLUDED_KEY] = included
+          end
+          root[META_KEY] = {}.tap do |meta|
+            meta[:count] = resources.count if resources.respond_to?(:count)
           end
         end
       end
