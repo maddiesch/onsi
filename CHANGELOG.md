@@ -1,3 +1,15 @@
+# Version 1.2.1
+
+## Released February 23, 2019
+
+###
+
+- Feat: Allow setting a different primary id attribute.
+
+- Fix: Rename method named `#object_id`
+
+---
+
 # Version 1.2.0
 
 ## Released February 23, 2019
