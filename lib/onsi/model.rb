@@ -48,8 +48,8 @@ module Onsi
       #
       # @param block [Block] The block. Called on an instance
       #   of {Onsi::Model::ModelRenderer}
-      def api_render(version, &block)
-        api_renderer(version).instance_exec(&block)
+      def api_render(version, id: :id, &block)
+        api_renderer(version, id).instance_exec(&block)
       end
 
       ##
@@ -63,12 +63,12 @@ module Onsi
       #
       # @raise [Onsi::Errors::UnknownVersionError] If the version isn't defined
       #   and the for_render param is true.
-      def api_renderer(version, for_render: false)
+      def api_renderer(version, id, for_render: false)
         @api_renderer ||= {}
         if for_render
           raise Errors::UnknownVersionError.new(self, version) if @api_renderer[version].nil?
         else
-          @api_renderer[version] ||= ModelRenderer.new
+          @api_renderer[version] ||= ModelRenderer.new(id)
         end
         @api_renderer[version]
       end
@@ -92,10 +92,15 @@ module Onsi
       DATETIME_FORMAT = '%Y-%m-%dT%H:%M:%SZ'.freeze
 
       ##
+      # The name of the id attribute on the model
+      attr_reader :id_attr
+
+      ##
       # Create a new ModelRenderer
       #
       # @private
-      def initialize
+      def initialize(id_attr)
+        @id_attr = id_attr
         @attributes = {}
         @relationships = {}
         @metadata = {}

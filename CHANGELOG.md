@@ -1,3 +1,13 @@
+# Version 1.2.0
+
+## Released February 23, 2019
+
+###
+
+- Feat: Allow setting a different primary id attribute.
+
+---
+
 # Version 1.1.0
 
 ## Released February 23, 2019
@@ -8,6 +18,8 @@
 
 - Feat: Allow Params to parse included relationships
 
+---
+
 # Version 1.0.1
 
 ## Released November 21, 2018
@@ -15,6 +27,8 @@
 ### Changes
 
 - Fix for nested complex attributes.
+
+---
 
 # Version 1.0.0
 

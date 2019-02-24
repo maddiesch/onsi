@@ -154,7 +154,7 @@ module Onsi
     def as_json(_opts = {})
       {}.tap do |root|
         root[TYPE_KEY] = type
-        root[ID_KEY]   = object.id.to_s
+        root[ID_KEY]   = object_id
         root[ATTRIBUTES_KEY] = generate_attributes
         append_relationships(root)
         append_meta(root)
@@ -189,8 +189,13 @@ module Onsi
       end
     end
 
+    def object_id
+      attr = object.class.api_renderer(version, nil, for_render: true).id_attr
+      object.send(attr).to_s
+    end
+
     def type
-      object.class.api_renderer(version, for_render: true).type || object.class.name.underscore
+      object.class.api_renderer(version, nil, for_render: true).type || object.class.name.underscore
     end
 
     def append_relationships(root)
@@ -216,15 +221,15 @@ module Onsi
     end
 
     def generate_attributes
-      object.class.api_renderer(version, for_render: true).render_attributes(object)
+      object.class.api_renderer(version, nil, for_render: true).render_attributes(object)
     end
 
     def generate_relationships
-      object.class.api_renderer(version, for_render: true).render_relationships(object)
+      object.class.api_renderer(version, nil, for_render: true).render_relationships(object)
     end
 
     def generate_metadata
-      object.class.api_renderer(version, for_render: true).render_metadata(object)
+      object.class.api_renderer(version, nil, for_render: true).render_metadata(object)
     end
 
     def generate_includes
