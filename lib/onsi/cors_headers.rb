@@ -131,6 +131,7 @@ module Onsi
         headers['Access-Control-Allow-Origin']      = allowed_origin if allowed_origin
         headers['Access-Control-Expose-Headers']    = self.class.expose_headers.to_a.join(', ')
         headers['Access-Control-Allow-Methods']     = self.class.allowed_methods.to_a.join(', ')
+        headers['Access-Control-Allow-Headers']     = self.class.allowed_headers.to_a.join(', ')
         headers['Vary']                             = self.class.varys.to_a.join(', ')
       end
     end
