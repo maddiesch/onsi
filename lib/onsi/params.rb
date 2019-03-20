@@ -97,6 +97,12 @@ module Onsi
         params = ActionController::Parameters.new(json)
         parse(params, attributes, relationships)
       end
+
+      def safe_fetch(key, id)
+        yield(id)
+      rescue ActiveRecord::RecordNotFound
+        raise RelationshipNotFound.new("Can't find relationship #{key}", key)
+      end
     end
 
     ##
@@ -186,10 +192,8 @@ module Onsi
     #   end
     #
     # @return [Any]
-    def safe_fetch(key)
-      yield(@relationships[key])
-    rescue ActiveRecord::RecordNotFound
-      raise RelationshipNotFound.new("Can't find relationship #{key}", key)
+    def safe_fetch(key, &block)
+      self.class.safe_fetch(key, @relationships[key], &block)
     end
 
     ##
