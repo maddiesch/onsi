@@ -2,6 +2,7 @@ class Person < ActiveRecord::Base
   include Onsi::Model
 
   has_many :emails
+  has_many :contacts
 
   validates :first_name, presence: true
   validates :last_name, presence: true

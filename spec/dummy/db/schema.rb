@@ -21,4 +21,11 @@ ActiveRecord::Schema.define(version: 1) do
     t.datetime 'updated_at'
     t.datetime 'created_at'
   end
+
+  create_table 'contacts', force: :cascade do |t|
+    t.string   'value',     limit: 32, null: false
+    t.integer  'person_id', limit: 4,  null: false
+    t.datetime 'updated_at'
+    t.datetime 'created_at'
+  end
 end

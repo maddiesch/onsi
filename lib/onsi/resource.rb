@@ -1,4 +1,5 @@
 require_relative 'errors'
+require_relative 'paginate'
 
 module Onsi
   ##
@@ -71,6 +72,8 @@ module Onsi
         case resource
         when Onsi::Resource
           resource
+        when Onsi::Paginate::Result
+          as_resource(resource.query, version)
         when Enumerable
           resource.map { |res| as_resource(res, version) }
         else
@@ -97,6 +100,9 @@ module Onsi
           end
           root[META_KEY] = {}.tap do |meta|
             meta[:count] = resources.count if resources.respond_to?(:count)
+            if resource.is_a?(Onsi::Paginate::Result)
+              meta[:pagination] = resource.params
+            end
           end
         end
       end

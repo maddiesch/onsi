@@ -34,6 +34,7 @@ module Onsi
       rescue_from Onsi::Params::RelationshipNotFound,    with: :respond_missing_relationship_error_400
       rescue_from Onsi::Errors::UnknownVersionError,     with: :respond_invalid_version_error_400
       rescue_from Onsi::Errors::IncludedParamError,      with: :respond_included_param_error_400
+      rescue_from Onsi::Errors::PaginationError,         with: :respond_pagination_error_400
     end
 
     ##
@@ -150,6 +151,18 @@ module Onsi
         meta: {
           attribute: error.attribute
         }
+      )
+      render_error(response)
+    end
+
+    ##
+    # @private
+    def respond_pagination_error_400(error)
+      response = ErrorResponse.new(400)
+      response.add(
+        400,
+        'pagination_error',
+        details: error.message
       )
       render_error(response)
     end

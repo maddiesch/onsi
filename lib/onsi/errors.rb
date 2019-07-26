@@ -55,5 +55,13 @@ module Onsi
         @path = path
       end
     end
+
+    ##
+    # Raised when there is an error with pagination
+    #
+    # @author Maddie Schipper
+    # @since 1.4.0
+    class PaginationError < BaseError
+    end
   end
 end

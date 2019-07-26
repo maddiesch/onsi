@@ -1,5 +1,11 @@
 # Changelog
 
+## Version 1.4.0
+
+### unreleased
+
+- Added pagination support
+
 ## Version 1.3.0
 
 ### Released March 19, 2019
