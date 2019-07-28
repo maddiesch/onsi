@@ -3,7 +3,8 @@ module Onsi
     ##
     # @private
     class RootController < ActionController::Metal
-      # include Onsi::ErrorResponder
+      include ActiveSupport::Rescuable
+      include Onsi::ErrorResponder
 
       ##
       # @private
