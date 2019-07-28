@@ -13,6 +13,12 @@ Metrics/LineLength:
 Metrics/MethodLength:
   Enabled: false
 
+Metrics/ModuleLength:
+  Enabled: false
+
+Metrics/ClassLength:
+  Enabled: false
+
 Metrics/ParameterLists:
   Max: 10
 
@@ -23,6 +29,7 @@ Metrics/BlockLength:
   Enabled: true
   Exclude:
     - spec/**/*
+    - onsi.gemspec
 
 DotPosition:
   EnforcedStyle: leading

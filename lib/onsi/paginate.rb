@@ -33,8 +33,12 @@ module Onsi
         cursor_param = options.fetch(:cursor_param, :cursor)
         max_per_page = options.fetch(:max_per_page, 100)
         per_page_param = options.fetch(:per_page_param, :per_page)
+
+        # rubocop:disable Lint/ShadowingOuterLocalVariable
         cursor_generator = options.fetch(:cursor, ->(query, type) { Paginate.cursor_for_query(query, type) })
         cursor_offset = options.fetch(:offset, ->(query, type, cursor) { Paginate.cursor_offset(query, type, cursor) })
+        # rubocop:enable Lint/ShadowingOuterLocalVariable
+
         order_by = options.fetch(:order_by, id: :asc)
 
         per_page = params.fetch(per_page_param, 25).to_i

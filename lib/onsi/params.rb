@@ -137,7 +137,7 @@ module Onsi
     #
     # @return [Hash] The flattened attributes and relationships
     def flatten
-      @flattened ||= attrs_hash.to_h.merge(relationships.to_h).with_indifferent_access
+      @flatten ||= attrs_hash.to_h.merge(relationships.to_h).with_indifferent_access
     end
 
     ##
