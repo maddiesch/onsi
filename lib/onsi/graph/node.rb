@@ -90,11 +90,11 @@ module Onsi
         @version = version
 
         unless @model.present?
-          raise Onsi::Graph::Abort.new(404, {}, nil)
+          raise Onsi::Graph::Abort.new(404, {}, Onsi::Graph::Error::NODE_MODEL_NIL_ERROR)
         end
 
         unless @model.is_a?(self.class.model)
-          raise Onsi::Graph::Abort.new(500, {}, nil)
+          raise Onsi::Graph::Abort.new(500, {}, Onsi::Graph::Error::NODE_MODEL_INVALID_TYPE)
         end
       end
 

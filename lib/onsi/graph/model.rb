@@ -223,39 +223,39 @@ module Onsi
       end
 
       def _response_unknown_version
-        raise Onsi::Graph::Abort.new(404, _default_headers, nil)
+        raise Onsi::Graph::Abort.new(404, _default_headers, Onsi::Graph::Error::MODEL_UNKNOWN_VERSION)
       end
 
       def _abort_unknown_path
-        raise Onsi::Graph::Abort.new(404, _default_headers, nil)
+        raise Onsi::Graph::Abort.new(404, _default_headers, Onsi::Graph::Error::MODEL_UNKNOWN_PATH)
       end
 
       def _abort_invalid_traversal
-        raise Onsi::Graph::Abort.new(500, _default_headers, nil)
+        raise Onsi::Graph::Abort.new(500, _default_headers, Onsi::Graph::Error::MODEL_INVALID_TRANSVERSAL)
       end
 
       def _abort_permissons_read_error
-        raise Onsi::Graph::Abort.new(401, _default_headers, nil)
+        raise Onsi::Graph::Abort.new(403, _default_headers, Onsi::Graph::Error::MODEL_PERMISSIONS_READ)
       end
 
       def _abort_missing_path_component
-        raise Onsi::Graph::Abort.new(400, _default_headers, nil)
+        raise Onsi::Graph::Abort.new(400, _default_headers, Onsi::Graph::Error::MODEL_MISSING_PATH_COMPONENT)
       end
 
       def _abort_bad_http_method
-        raise Onsi::Graph::Abort.new(400, _default_headers, nil)
+        raise Onsi::Graph::Abort.new(400, _default_headers, Onsi::Graph::Error::MODEL_INVALID_HTTP_METHOD)
       end
 
       def _abort_permissions_create_error
-        raise Onsi::Graph::Abort.new(401, _default_headers, nil)
+        raise Onsi::Graph::Abort.new(403, _default_headers, Onsi::Graph::Error::MODEL_PERMISSIONS_CREATE)
       end
 
       def _abort_permissions_update_error
-        raise Onsi::Graph::Abort.new(401, _default_headers, nil)
+        raise Onsi::Graph::Abort.new(403, _default_headers, Onsi::Graph::Error::MODEL_PERMISSIONS_UPDATE)
       end
 
       def _abort_permissions_destroy_error
-        raise Onsi::Graph::Abort.new(401, _default_headers, nil)
+        raise Onsi::Graph::Abort.new(403, _default_headers, Onsi::Graph::Error::MODEL_PERMISSIONS_DESTROY)
       end
 
       def _default_headers

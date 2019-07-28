@@ -1,3 +1,5 @@
+require_relative 'error'
+
 module Onsi
   module Graph
     ##
@@ -38,7 +40,7 @@ module Onsi
       #
       def initialize(status, headers, body)
         @status = status
-        @headers = headers
+        @headers = Onsi::Graph::Error::ERROR_HEADERS.merge(headers)
         @body = body.to_s
       end
     end
