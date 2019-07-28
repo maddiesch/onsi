@@ -1,12 +1,18 @@
 module Onsi
   module Graph
+    ##
+    # @private
     class RootController < ActionController::Metal
       # include Onsi::ErrorResponder
 
+      ##
+      # @private
       def root
         raise 'wip'
       end
 
+      ##
+      # @private
       def graph_action
         par = ActionController::Parameters.new(params)
         req = Onsi::Graph::Request.new(request.env)
