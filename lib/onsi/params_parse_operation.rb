@@ -71,7 +71,7 @@ module Onsi
       end
     end
 
-    # rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
+    # rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity
     def parse_included_relationship(key, value, params)
       relationship = params.fetch(key.to_sym, nil)
       return if relationship.nil?
@@ -120,7 +120,7 @@ module Onsi
         results.relationships[type] = parsed_included.first.flattened
       end
     end
-    # rubocop:enable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
+    # rubocop:enable Metrics/AbcSize, Metrics/CyclomaticComplexity
 
     def find_included(type, id)
       included.select do |param|

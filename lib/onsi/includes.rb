@@ -38,7 +38,7 @@ module Onsi
     ##
     # @private
     def method_missing(name, *args, &block)
-      if name =~ FETCH_METHOD_REGEXP
+      if FETCH_METHOD_REGEXP.match?(name)
         add_fetch_method(name.to_s.gsub(/\Afetch_/, ''), *args, &block)
       else
         super
@@ -48,7 +48,7 @@ module Onsi
     ##
     # @private
     def respond_to_missing?(name, include_private = false)
-      if name =~ FETCH_METHOD_REGEXP
+      if FETCH_METHOD_REGEXP.match?(name)
         true
       else
         super
