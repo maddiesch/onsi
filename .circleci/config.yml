@@ -40,6 +40,29 @@ jobs:
             ./cc-test-reporter upload-coverage
       - store_artifacts:
           path: coverage/coverage.json
+  build_2_6:
+    docker:
+      - image: circleci/ruby:2.6
+    working_directory: ~/repo
+    steps:
+      - checkout
+      - run: gem install bundler
+      - restore_cache:
+          keys:
+            - v1-gems-build_2_6-{{ .Branch }}-{{ .Revision }}
+            - v1-gems-build_2_6-{{ .Branch }}
+            - v1-gems-build_2_6-
+      - run:
+          name: install gems
+          command: |
+            bundle install --jobs=4 --retry=3 --path vendor/bundle-2_5
+      - save_cache:
+          key: v1-gems-build_2_6-{{ .Branch }}-{{ .Revision }}
+          paths:
+            - ./vendor/bundle-2_6
+      - run:
+          name: Run Specs
+          command: bundle exec rspec spec/**/*.rb
   build_2_5:
     docker:
       - image: circleci/ruby:2.5
@@ -63,57 +86,10 @@ jobs:
       - run:
           name: Run Specs
           command: bundle exec rspec spec/**/*.rb
-  build_2_4:
-    docker:
-      - image: circleci/ruby:2.4.2
-    working_directory: ~/repo
-    steps:
-      - checkout
-      - run: gem install bundler -v 1.17.1
-      - restore_cache:
-          keys:
-            - v1-gems-build_2_4-{{ .Branch }}-{{ .Revision }}
-            - v1-gems-build_2_4-{{ .Branch }}
-            - v1-gems-build_2_4-
-      - run:
-          name: install gems
-          command: |
-            bundle install --jobs=4 --retry=3 --path vendor/bundle-2_4
-      - save_cache:
-          key: v1-gems-build_2_4-{{ .Branch }}-{{ .Revision }}
-          paths:
-            - ./vendor/bundle-2_4
-      - run:
-          name: Run Specs
-          command: bundle exec rspec spec/**/*.rb
-  build_2_3:
-    docker:
-      - image: circleci/ruby:2.3.4
-    working_directory: ~/repo
-    steps:
-      - checkout
-      - run: gem install bundler -v 1.17.1
-      - restore_cache:
-          keys:
-            - v1-gems-build_2_3-{{ .Branch }}-{{ .Revision }}
-            - v1-gems-build_2_3-{{ .Branch }}
-            - v1-gems-build_2_3-
-      - run:
-          name: install gems
-          command: |
-            bundle install --jobs=4 --retry=3 --path vendor/bundle-2_3
-      - save_cache:
-          key: v1-gems-build_2_3-{{ .Branch }}-{{ .Revision }}
-          paths:
-            - ./vendor/bundle-2_3
-      - run:
-          name: Run Specs
-          command: bundle exec rspec spec/**/*.rb
 workflows:
   version: 2
   specs:
     jobs:
-      - build_2_3
-      - build_2_4
       - build_2_5
+      - build_2_6
       - latest
