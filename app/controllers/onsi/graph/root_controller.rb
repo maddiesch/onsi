@@ -7,8 +7,11 @@ module Onsi
 
       ##
       # @private
-      def root
-        raise 'wip'
+      def index
+        url = Addressable::URI.parse(request.url)
+        url.path = Pathname.new(url.path).join(params.fetch(:model).versions.last.to_s).to_s
+        self.status = 302
+        headers['Location'] = url.to_s
       end
 
       ##

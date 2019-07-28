@@ -9,6 +9,14 @@ RSpec.describe 'Graph', type: :request do
 
   let(:body) { JSON.parse(response.body) }
 
+  describe 'GET /graph/v1/' do
+    before { get '/graph/v1/' }
+
+    it { is_expected.to have_http_status :found }
+
+    it { expect(response.headers['Location']).to eq 'http://www.example.com/graph/v1/2019-07-01' }
+  end
+
   describe 'GET /graph/v1/2019-07-01/emails/1/messages' do
     before { get "/graph/v1/2019-07-01/emails/#{email.id}/messages" }
 
