@@ -190,8 +190,20 @@ module Onsi
           response.status = 200
           _render_node(node)
         when Rack::POST
+          _abort_permissions_create_error unless node.permitted?(request, :create)
+          node = node.create(request)
+          response.status = 201
+          _render_node(node)
         when Rack::PATCH
+          _abort_permissions_update_error unless node.permitted?(request, :update)
+          node.update!(request)
+          response.status = 200
+          _render_node(node)
         when Rack::DELETE
+          _abort_permissions_destroy_error unless node.permitted?(request, :destroy)
+          node.destroy!(request)
+          response.status = 204
+          response.body = nil
         else
           _abort_bad_http_method
         end
@@ -232,6 +244,18 @@ module Onsi
 
       def _abort_bad_http_method
         raise Onsi::Graph::Abort.new(400, _default_headers, nil)
+      end
+
+      def _abort_permissions_create_error
+        raise Onsi::Graph::Abort.new(401, _default_headers, nil)
+      end
+
+      def _abort_permissions_update_error
+        raise Onsi::Graph::Abort.new(401, _default_headers, nil)
+      end
+
+      def _abort_permissions_destroy_error
+        raise Onsi::Graph::Abort.new(401, _default_headers, nil)
       end
 
       def _default_headers

@@ -1,5 +1,7 @@
 require 'active_support'
 
+require_relative '../params'
+
 require_relative 'error'
 require_relative 'node_dsl'
 require_relative 'abort'
@@ -62,9 +64,19 @@ module Onsi
         def inbound_edges
           @inbound_edges ||= version_module.edges.select { |e| e.head == self }
         end
+
+        ##
+        # @private
+        def build_model(relationship, request)
+          if (fn = builder).present?
+            instance_exec(request, relationship, &fn)
+          else
+            relationship.new
+          end
+        end
       end
 
-      define_callbacks :save, :build, :update, :destroy
+      define_callbacks :save, :create, :update, :destroy
 
       attr_reader :model
 
@@ -98,10 +110,70 @@ module Onsi
         permissions(request).send("can_#{type}?")
       end
 
+      ##
+      # @private
+      def create!(request)
+        ActiveSupport::Notifications.instrument('onsi.graph.node-create', node: self) do
+          run_callbacks :create do
+            _create(request)
+          end
+        end
+      end
+
+      ##
+      # @private
+      def update!(request)
+        ActiveSupport::Notifications.instrument('onsi.graph.node-update', node: self) do
+          run_callbacks :update do
+            _update(request)
+          end
+        end
+      end
+
+      ##
+      # @private
+      def destroy!(request)
+        ActiveSupport::Notifications.instrument('onsi.graph.node-destroy', node: self) do
+          run_callbacks :destroy do
+            _destroy(request)
+          end
+        end
+      end
+
+      def assign_attributes(params)
+        model.assign_attributes(params.flatten)
+      end
+
       private
 
       def permissions(request)
         self.class.permissions.new(@incoming, request)
+      end
+
+      def _create(request)
+        request.body.rewind
+        params = Onsi::Params.parse_json(request.body.read, self.class.assign_create_attr, [])
+        assign_attributes(params)
+        _save!
+      end
+
+      def _update(request)
+        request.body.rewind
+        params = Onsi::Params.parse_json(request.body.read, self.class.assign_update_attr, [])
+        assign_attributes(params)
+        _save!
+      end
+
+      def _destroy(_request)
+        model.destroy!
+      end
+
+      def _save!
+        ActiveSupport::Notifications.instrument('onsi.graph.node-save', node: self) do
+          run_callbacks :save do
+            model.save!
+          end
+        end
       end
     end
   end

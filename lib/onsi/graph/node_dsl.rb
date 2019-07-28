@@ -36,9 +36,31 @@ module Onsi
           attributes << attr
         end
 
+        def builder(&block)
+          @builder = block if block_given?
+          @builder
+        end
+
         def permissions(permissions = nil)
           @permissions = Onsi::Graph::Permissions.from(version_module, permissions) unless permissions.nil?
           @permissions || Onsi::Graph::Permissions
+        end
+
+        def assign_attr(attribute)
+          assign_create_attr(attribute)
+          assign_update_attr(attribute)
+        end
+
+        def assign_create_attr(attribute = nil)
+          @assign_create_attr ||= Set.new
+          @assign_create_attr.add(attribute) unless attribute.nil?
+          @assign_create_attr.to_a
+        end
+
+        def assign_update_attr(attribute = nil)
+          @assign_create_attr ||= Set.new
+          @assign_create_attr.add(attribute) unless attribute.nil?
+          @assign_create_attr.to_a
         end
       end
     end

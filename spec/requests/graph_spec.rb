@@ -70,4 +70,51 @@ RSpec.describe 'Graph', type: :request do
 
     it { expect(body.dig('data', 'id')).to eq person.id.to_s }
   end
+
+  describe 'POST /graph/v1/2019-07-01/emails' do
+    let(:params) do
+      JSON.dump(
+        data: {
+          type: 'email',
+          attributes: {
+            address: 'testing+create@domain.test'
+          }
+        }
+      )
+    end
+
+    before { post '/graph/v1/2019-07-01/emails', params: params }
+
+    it { is_expected.to have_http_status :created }
+
+    it { expect(person.emails.count).to eq 2 }
+  end
+
+  describe 'PATCH /graph/v1/2019-07-01/emails/1' do
+    let(:params) do
+      JSON.dump(
+        data: {
+          type: 'email',
+          id: email.id.to_s,
+          attributes: {
+            address: 'testing+update@domain.test'
+          }
+        }
+      )
+    end
+
+    before { patch "/graph/v1/2019-07-01/emails/#{email.id}", params: params }
+
+    it { is_expected.to have_http_status :ok }
+
+    it { expect(email.reload.address).to eq 'testing+update@domain.test' }
+  end
+
+  describe 'DELETE /graph/v1/2019-07-01/emails/1' do
+    before { delete "/graph/v1/2019-07-01/emails/#{email.id}" }
+
+    it { is_expected.to have_http_status :no_content }
+
+    it { expect { email.reload }.to raise_error ActiveRecord::RecordNotFound }
+  end
 end
