@@ -1,5 +1,6 @@
 class Person < ActiveRecord::Base
   include Onsi::Model
+  include Currentable::Instance
 
   has_many :emails
   has_many :contacts

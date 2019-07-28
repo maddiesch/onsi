@@ -2,6 +2,7 @@ require 'active_support'
 
 require_relative 'error'
 require_relative 'node_dsl'
+require_relative 'abort'
 
 module Onsi
   module Graph
@@ -64,6 +65,44 @@ module Onsi
       end
 
       define_callbacks :save, :build, :update, :destroy
+
+      attr_reader :model
+
+      attr_reader :version
+
+      ##
+      # @private
+      def initialize(incoming, model, version)
+        @incoming = incoming
+        @model = model
+        @version = version
+
+        unless @model.present?
+          raise Onsi::Graph::Abort.new(404, {}, nil)
+        end
+
+        unless @model.is_a?(self.class.model)
+          raise Onsi::Graph::Abort.new(500, {}, nil)
+        end
+      end
+
+      ##
+      # @private
+      def resource
+        Onsi::Resource.as_resource(model, version)
+      end
+
+      ##
+      # @private
+      def permitted?(request, type)
+        permissions(request).send("can_#{type}?")
+      end
+
+      private
+
+      def permissions(request)
+        self.class.permissions.new(@incoming, request)
+      end
     end
   end
 end

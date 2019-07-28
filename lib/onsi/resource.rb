@@ -86,7 +86,7 @@ module Onsi
       #
       # @param resource (see .as_resource)
       #
-      # @param version [Symbol] The version to render as. `:v1`
+      # @param version [Symbol] The version to render as. +:v1+
       #
       # @return [Hash] The rendered resource as a hash ready to be converted
       #   to JSON.

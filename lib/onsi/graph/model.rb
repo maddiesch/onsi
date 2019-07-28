@@ -1,6 +1,9 @@
-require 'active_support'
+require 'active_support/callbacks'
+require 'active_support/notifications'
 
 require_relative 'response'
+require_relative 'permissions'
+require_relative '../resource'
 
 module Onsi
   module Graph
@@ -9,7 +12,7 @@ module Onsi
     #
     # @example A simple model
     #   class AppGraph < Onsi::Graph::Model
-    #     add_version(Onsi::Graph::Version.new('2019-07-01', 'Person'))
+    #     add_version(Onsi::Graph::Version.new('2019-07-01', Onsi::Graph::Version::Root.new('Person', -> { Person.current })))
     #
     #     set_callback(:action, :before) do
     #       puts 'Callback Before Action'
@@ -37,10 +40,9 @@ module Onsi
         ##
         # Used to define a new version for the graph
         #
-        # @example Add a version
-        #   add_version(Onsi::Graph::Version.new('2019-07-01', 'Person'))
-        #
         # @param version [Onsi::Graph::Version] The version to add.
+        #
+        # @return [void]
         def add_version(version)
           version.load_version!(self)
           versions << version
@@ -124,8 +126,10 @@ module Onsi
       ##
       # @private
       def call
-        run_callbacks(:action) do
-          _process
+        ActiveSupport::Notifications.instrument('onsi.graph.model-process') do
+          run_callbacks(:action) do
+            _process
+          end
         end
       end
 
@@ -138,14 +142,72 @@ module Onsi
         @traversal = version.route(request.path)
         _abort_unknown_path if @traversal.nil?
 
-        run_callbacks(:process) do
-          _process_action
+        path_components = @traversal.each_with_object([]) do |trans, components|
+          components << trans.edge.fragment if trans.edge.present?
+          components << '*' if trans.id.present?
+        end
+
+        extra = {
+          version: @version,
+          traversal: @traversal,
+          path: Pathname.new('/').join(*path_components).to_s
+        }
+
+        ActiveSupport::Notifications.instrument('onsi.graph.model-action', extra) do
+          run_callbacks(:process) do
+            _process_action
+          end
         end
       end
 
       def _process_action
-        binding.pry
+        root_instance = version.root_node_instance(request)
+        working_traversal = traversal.dup
+        instance = root_instance
+
+        while (trans = working_traversal.shift).present?
+          _abort_permissons_read_error unless instance.permitted?(request, :read)
+
+          break if trans.edge.nil? # the root node
+
+          edge = trans.edge.new(instance, trans.id)
+
+          _abort_missing_path_component if edge.head.is_a?(Onsi::Graph::NodeCollection) && working_traversal.any?
+
+          instance = edge.head
+        end
+
+        ActiveSupport::Notifications.instrument('onsi.graph.node-process', node: instance) do
+          _process_node(instance)
+        end
+      end
+
+      def _process_node(node)
+        _abort_permissons_read_error unless node.permitted?(request, :read)
+
+        case request.request_method
+        when Rack::GET
+          response.status = 200
+          _render_node(node)
+        when Rack::POST
+        when Rack::PATCH
+        when Rack::DELETE
+        else
+          _abort_bad_http_method
+        end
         true
+      end
+
+      def _render_node(node)
+        ActiveSupport::Notifications.instrument('onsi.graph.node-render', node: node) do
+          resource = node.resource
+          if resource.nil?
+            response.body = nil
+            response.status = 204
+          else
+            response.body = JSON.dump(Onsi::Resource.render(resource, version.render_version))
+          end
+        end
       end
 
       def _response_unknown_version
@@ -154,6 +216,22 @@ module Onsi
 
       def _abort_unknown_path
         raise Onsi::Graph::Abort.new(404, _default_headers, nil)
+      end
+
+      def _abort_invalid_traversal
+        raise Onsi::Graph::Abort.new(500, _default_headers, nil)
+      end
+
+      def _abort_permissons_read_error
+        raise Onsi::Graph::Abort.new(401, _default_headers, nil)
+      end
+
+      def _abort_missing_path_component
+        raise Onsi::Graph::Abort.new(400, _default_headers, nil)
+      end
+
+      def _abort_bad_http_method
+        raise Onsi::Graph::Abort.new(400, _default_headers, nil)
       end
 
       def _default_headers

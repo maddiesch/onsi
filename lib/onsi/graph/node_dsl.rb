@@ -1,3 +1,5 @@
+require_relative 'permissions'
+
 module Onsi
   module Graph
     ##
@@ -32,6 +34,11 @@ module Onsi
         #   on the {.model} value.
         def attribute(attr)
           attributes << attr
+        end
+
+        def permissions(permissions = nil)
+          @permissions = Onsi::Graph::Permissions.from(version_module, permissions) unless permissions.nil?
+          @permissions || Onsi::Graph::Permissions
         end
       end
     end

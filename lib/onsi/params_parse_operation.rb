@@ -91,7 +91,7 @@ module Onsi
       included_objects = find_included(type, id)
 
       if included_objects.nil? || included_objects.empty?
-        raise Onsi::Errors::IncludedParamError.new("Invalid Source: Unable to find included.", included_path)
+        raise Onsi::Errors::IncludedParamError.new('Invalid Source: Unable to find included.', included_path)
       end
 
       if included_objects.count != 1 && id != MULTI_SOURCE_PATH

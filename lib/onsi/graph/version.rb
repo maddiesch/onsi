@@ -3,18 +3,57 @@ require_relative 'traversal'
 
 module Onsi
   module Graph
+    ##
+    # A Graph version
+    #
+    # A version encapsulates the edges and nodes for a specific version of the graph.
+    #
+    # @author Maddie Schipper
+    # @since 2.0.0
     class Version
+      ##
+      # The root of a version.
+      #
+      # @param name [String] The base name of the node
+      # @param fetcher [#call] The object used to fetch the root node's model
+      Root = Struct.new(:name, :fetcher)
+
       ##
       # @private
       VERSION_NAME_REGEXP = Regexp.new('\A(\d{4})-([01]\d)-([0-3]\d)\z').freeze
 
+      ##
+      # @private
       attr_reader :root_node
 
-      def initialize(version, root_class_name)
+      ##
+      # The default version used to render a node's resource
+      #
+      # @return [Symbol] The version e.g. +:v1+
+      attr_reader :render_version
+
+      ##
+      # The fetcher is what is called to fetch the root resource for the root node
+      attr_reader :fetcher
+
+      ##
+      # Create a new version of the graph.
+      #
+      # @example Creating a version
+      #   Onsi::Graph::Version.new(
+      #     '2019-07-01',
+      #     Onsi::Graph::Version::Root.new('Person', ->(_) { Person.current }),
+      #     render_version: :v2
+      #   )
+      #
+      # @return [void]
+      def initialize(version, root, render_version: :v1)
         raise 'Invalid Version String' unless VERSION_NAME_REGEXP.match?(version)
 
         @year, @month, @day = version.split('-', 3).map(&:to_i)
-        @root_class_name = root_class_name
+        @root_class_name = root.name
+        @fetcher = root.fetcher
+        @render_version = render_version
       end
 
       ##
@@ -27,9 +66,13 @@ module Onsi
           @instance = instance
         end
 
-        delegate :edges, :actions, :nodes, :root_node, :path, to: :instance
+        delegate :edges, :actions, :nodes, :root_node, :path, :renderable, to: :instance
       end
 
+      ##
+      # Returns the string representation of the version.
+      #
+      # @return [String]
       def to_s
         format('%04i-%02i-%02i', @year, @month, @day)
       end
@@ -44,6 +87,12 @@ module Onsi
       # @private
       def version_module
         @model_klass.const_get(module_name)
+      end
+
+      ##
+      # @private
+      def root_node_instance(request)
+        root_node.new(nil, fetcher.call(request), render_version)
       end
 
       ##
@@ -66,15 +115,22 @@ module Onsi
         Rails.root.join('app/graphs', @model_klass.name.underscore, module_name.downcase)
       end
 
+      ##
+      # @private
       def edges
         @edges ||= load_edges
       end
 
+      ##
+      # @private
       def nodes
         @nodes ||= load_nodes
       end
 
+      ##
+      # @private
       def route(path)
+        path = path.gsub(/\A#{Regexp.escape(File::SEPARATOR)}/, '')
         node = root_node
         parts = path.split(File::SEPARATOR)
 
