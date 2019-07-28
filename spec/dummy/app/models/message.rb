@@ -3,6 +3,8 @@ class Message < ActiveRecord::Base
 
   belongs_to :email
 
+  has_many :comments
+
   api_render(:v1) do
     attribute :sent_at
 

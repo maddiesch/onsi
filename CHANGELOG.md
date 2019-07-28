@@ -1,10 +1,18 @@
 # Changelog
 
-## Version 1.4.0
+## Version 2.0.0
 
 ### unreleased
 
 - Added pagination support
+
+- Fix: Relationships without a valid value now render a `nil` data structure. This is a breaking change. To keep the old behavior you can use `legacy_relationship_render!`
+
+    ```ruby
+    api_render(:v1) do
+      legacy_relationship_render!
+    end
+    ```
 
 ## Version 1.3.0
 

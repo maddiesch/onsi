@@ -21,6 +21,7 @@ RSpec.describe 'Emails API', type: :request do
     it { expect(subject['data'][0]['relationships']['person']['data']).to have_key 'type' }
     it { expect(subject['data'][0]['relationships']['person']['data']).to have_key 'id' }
     it { expect(subject['data'][0]['relationships']['person']['data']['id']).to eq person.id.to_s }
+    it { expect(subject.dig('data', 0, 'relationships', 'invalid', 'data', 'id')).to eq '' }
   end
 
   describe 'GET /api/v1/people/1/emails/1' do

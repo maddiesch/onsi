@@ -204,6 +204,10 @@ module Onsi
         end
       end
 
+      def legacy_relationship_render!
+        @legacy_relationship_render = true
+      end
+
       private
 
       def render_relationship_entry(object, key, value, rels)
@@ -224,6 +228,30 @@ module Onsi
       end
 
       def format_relationship(relationship, value)
+        if @legacy_relationship_render == true
+          return legacy_format_relationship(relationship, value)
+        end
+
+        case relationship
+        when Enumerable
+          if relationship.empty?
+            return []
+          end
+
+          relationship.map { |v| { 'type' => value[:type].to_s, 'id' => v.to_s } }
+        else
+          unless relationship.to_s.present?
+            return nil
+          end
+
+          {
+            'type' => value[:type].to_s,
+            'id' => relationship.to_s
+          }
+        end
+      end
+
+      def legacy_format_relationship(relationship, value)
         case relationship
         when Array
           relationship.map { |v| { 'type' => value[:type].to_s, 'id' => v.to_s } }

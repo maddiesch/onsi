@@ -28,4 +28,12 @@ ActiveRecord::Schema.define(version: 1) do
     t.datetime 'updated_at'
     t.datetime 'created_at'
   end
+
+  create_table 'comments', force: :cascade do |t|
+    t.string   'body',       limit: 32, null: false
+    t.integer  'message_id', limit: 4,  null: false
+    t.integer  'parent_id',  limit: 4
+    t.datetime 'updated_at'
+    t.datetime 'created_at'
+  end
 end

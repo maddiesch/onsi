@@ -8,6 +8,7 @@ Rails.application.routes.draw do
     post '/people/:person_id/emails/:email_id/messages' => 'messages#create'
     post '/people/:person_id/emails'                    => 'emails#create'
     get  '/people/:person_id/contacts'                  => 'contacts#index'
+    get  '/messages/:message_id/comments'               => 'comments#index'
 
     match '(*path)' => 'application#cors_options', via: :options
   end

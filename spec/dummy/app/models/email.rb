@@ -8,6 +8,8 @@ class Email < ActiveRecord::Base
   has_many :messages, dependent: :destroy
 
   api_render(:v1) do
+    legacy_relationship_render!
+
     attribute :address
     attribute :created_at
     attribute :updated_at
@@ -15,6 +17,7 @@ class Email < ActiveRecord::Base
     relationship :person, :person
 
     relationship(:messages, :message) { messages.map(&:id) }
+    relationship(:invalid, :invalid) { nil }
 
     meta(:validated) { true }
   end
