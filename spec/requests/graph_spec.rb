@@ -29,6 +29,24 @@ RSpec.describe 'Graph', type: :request do
     it { expect(body.dig('data', 0, 'id')).to eq message.id.to_s }
   end
 
+  describe 'GET /graph/v1/2019-07-01//1/messages' do
+    before { get "/graph/v1/2019-07-01//#{email.id}/messages" }
+
+    it { is_expected.to have_http_status :not_found }
+  end
+
+  describe 'GET /graph/v1/2019-07-01/1/messages' do
+    before { get "/graph/v1/2019-07-01/#{email.id}/messages" }
+
+    it { is_expected.to have_http_status :not_found }
+  end
+
+  describe 'GET /graph/v1/2019-07-01/emails/0/messages' do
+    before { get '/graph/v1/2019-07-01/emails/0/messages' }
+
+    it { is_expected.to have_http_status :not_found }
+  end
+
   describe 'GET /graph/v1/2019-07-01/emails/1/messages/1' do
     before { get "/graph/v1/2019-07-01/emails/#{email.id}/messages/#{message.id}" }
 

@@ -42,7 +42,8 @@ module Onsi
     #
     # @param response [Onsi::ErrorResponse] The response object to render
     def render_error(response)
-      render(response.renderable)
+      self.status = response.status
+      self.response_body = JSON.dump(response.as_json)
     end
 
     ##

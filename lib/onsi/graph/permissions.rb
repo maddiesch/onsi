@@ -12,7 +12,7 @@ module Onsi
         def from(_version, permissions)
           if permissions.is_a?(Symbol)
             load_permissions(permissions)
-          elsif permissions <= Onsi::Graph::Permissions
+          elsif permissions.is_a?(Class) && permissions <= Onsi::Graph::Permissions
             permissions
           else
             raise 'unexpected permissions type'

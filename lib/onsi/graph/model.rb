@@ -137,10 +137,14 @@ module Onsi
 
       def _process
         @version = versions.detect { |v| v.to_s == request.version_name }
-        _abort_unknown_version if @version.nil?
+        if @version.nil?
+          _response_unknown_version_error
+        end
 
         @traversal = version.route(request.path)
-        _abort_unknown_path if @traversal.nil?
+        if @traversal.nil?
+          _abort_unknown_path_error
+        end
 
         path_components = @traversal.each_with_object([]) do |trans, components|
           components << trans.edge.fragment if trans.edge.present?
@@ -172,7 +176,7 @@ module Onsi
 
           edge = trans.edge.new(instance, trans.id)
 
-          _abort_missing_path_component if edge.head.is_a?(Onsi::Graph::NodeCollection) && working_traversal.any?
+          _abort_missing_path_component_error if edge.head.is_a?(Onsi::Graph::NodeCollection) && working_traversal.any?
 
           instance = edge.head
         end
@@ -205,7 +209,7 @@ module Onsi
           response.status = 204
           response.body = nil
         else
-          _abort_bad_http_method
+          _abort_bad_http_method_error
         end
         true
       end
@@ -222,11 +226,11 @@ module Onsi
         end
       end
 
-      def _response_unknown_version
+      def _abort_unknown_version_error
         raise Onsi::Graph::Abort.new(404, _default_headers, Onsi::Graph::Error::MODEL_UNKNOWN_VERSION)
       end
 
-      def _abort_unknown_path
+      def _abort_unknown_path_error
         raise Onsi::Graph::Abort.new(404, _default_headers, Onsi::Graph::Error::MODEL_UNKNOWN_PATH)
       end
 
@@ -238,11 +242,11 @@ module Onsi
         raise Onsi::Graph::Abort.new(403, _default_headers, Onsi::Graph::Error::MODEL_PERMISSIONS_READ)
       end
 
-      def _abort_missing_path_component
+      def _abort_missing_path_component_error
         raise Onsi::Graph::Abort.new(400, _default_headers, Onsi::Graph::Error::MODEL_MISSING_PATH_COMPONENT)
       end
 
-      def _abort_bad_http_method
+      def _abort_bad_http_method_error
         raise Onsi::Graph::Abort.new(400, _default_headers, Onsi::Graph::Error::MODEL_INVALID_HTTP_METHOD)
       end
 

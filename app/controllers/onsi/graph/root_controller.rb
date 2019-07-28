@@ -37,6 +37,8 @@ module Onsi
         end
         self.status = e.status
         self.response_body = e.body
+      rescue StandardError => e
+        rescue_with_handler(e) || raise
       end
     end
   end
