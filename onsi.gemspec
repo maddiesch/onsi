@@ -18,14 +18,15 @@ Gem::Specification.new do |spec|
   end
   spec.bindir        = 'exe'
   spec.executables   = spec.files.grep(%r{^exe/}) { |f| File.basename(f) }
-  spec.require_paths = ['lib']
+  spec.require_paths = %w[lib config app]
 
-  spec.required_ruby_version = '>= 2.3'
+  spec.required_ruby_version = '>= 2.5'
 
   spec.add_dependency 'addressable', '>= 2.5', '< 3.0'
   spec.add_dependency 'rails',       '>= 5.0', '< 6.0'
 
   spec.add_development_dependency 'bundler',          '>= 1.16', '< 3.0'
+  spec.add_development_dependency 'currentable',      '~> 1.0.2'
   spec.add_development_dependency 'database_cleaner', '~> 1.7.0'
   spec.add_development_dependency 'pry',              '~> 0.11.3'
   spec.add_development_dependency 'rake',             '~> 10.0'

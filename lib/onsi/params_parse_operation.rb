@@ -8,6 +8,8 @@ module Onsi
   class ParamsParseOperation
     MULTI_SOURCE_PATH = '*'.freeze
 
+    ##
+    # @private
     Result = Struct.new(:id, :attributes, :relationships) do
       def flattened
         attributes.merge(relationships)
@@ -71,6 +73,7 @@ module Onsi
       end
     end
 
+    # rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity
     def parse_included_relationship(key, value, params)
       relationship = params.fetch(key.to_sym, nil)
       return if relationship.nil?
@@ -91,7 +94,7 @@ module Onsi
       included_objects = find_included(type, id)
 
       if included_objects.nil? || included_objects.empty?
-        raise Onsi::Errors::IncludedParamError.new("Invalid Source: Unable to find included.", included_path)
+        raise Onsi::Errors::IncludedParamError.new('Invalid Source: Unable to find included.', included_path)
       end
 
       if included_objects.count != 1 && id != MULTI_SOURCE_PATH
@@ -119,6 +122,7 @@ module Onsi
         results.relationships[type] = parsed_included.first.flattened
       end
     end
+    # rubocop:enable Metrics/AbcSize, Metrics/CyclomaticComplexity
 
     def find_included(type, id)
       included.select do |param|

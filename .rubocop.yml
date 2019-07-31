@@ -1,5 +1,5 @@
 AllCops:
-  TargetRubyVersion: 2.3
+  TargetRubyVersion: 2.5
   Exclude:
     - Rakefile
     - spec/**/*
@@ -13,16 +13,26 @@ Metrics/LineLength:
 Metrics/MethodLength:
   Enabled: false
 
+Metrics/ModuleLength:
+  Enabled: false
+
+Metrics/ClassLength:
+  Enabled: false
+
 Metrics/ParameterLists:
   Max: 10
 
 Metrics/CyclomaticComplexity:
   Max: 10
 
+Metrics/PerceivedComplexity:
+  Max: 16
+
 Metrics/BlockLength:
   Enabled: true
   Exclude:
     - spec/**/*
+    - onsi.gemspec
 
 DotPosition:
   EnforcedStyle: leading

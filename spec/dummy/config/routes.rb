@@ -1,4 +1,6 @@
 Rails.application.routes.draw do
+  mount Onsi::Graph::Engine, at: '/graph/v1', model: AppGraph
+
   scope 'api/:version' do
     get  '/people'                                      => 'people#index'
     post '/people'                                      => 'people#create'

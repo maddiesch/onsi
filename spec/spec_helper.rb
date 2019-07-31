@@ -3,6 +3,7 @@ ENV['RAILS_ENV'] = 'test'
 require 'bundler/setup'
 require 'pry'
 require 'database_cleaner'
+require 'currentable'
 require 'simplecov'
 
 SimpleCov.start do
