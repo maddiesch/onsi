@@ -78,8 +78,16 @@ module Onsi
 
       define_callbacks :save, :create, :update, :destroy
 
+      ##
+      # The instance of the model
+      #
+      # @return [ActiveRecord::Base]
       attr_reader :model
 
+      ##
+      # The version that will be rendered
+      #
+      # @return [Symbol]
       attr_reader :version
 
       ##
@@ -140,6 +148,10 @@ module Onsi
         end
       end
 
+      ##
+      # Provides a place where the setting of attributes can be customized.
+      #
+      # @return [void]
       def assign_attributes(params)
         model.assign_attributes(params.flatten)
       end

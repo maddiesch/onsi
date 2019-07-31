@@ -1,7 +1,7 @@
 module Onsi
   module Graph
     ##
-    # Private
+    # @private
     Response = Struct.new(:status, :headers, :body)
   end
 end
