@@ -14,8 +14,15 @@ module Onsi
       ##
       # The root of a version.
       #
-      # @param name [String] The base name of the node
-      # @param fetcher [#call] The object used to fetch the root node's model
+      # @!attribute [rw] name
+      #   The root of the version.
+      #
+      #   @return [String]
+      #
+      # @!attribute [rw] fetcher
+      #   Must return a single instance of the root node's model.
+      #
+      #   @return [#call]
       Root = Struct.new(:name, :fetcher)
 
       ##
@@ -45,6 +52,10 @@ module Onsi
       #     Onsi::Graph::Version::Root.new('Person', ->(_) { Person.current }),
       #     render_version: :v2
       #   )
+      #
+      # @param version [String] The version number +2019-07-01+
+      # @param root [String] The class name of the root node.
+      # @param render_version [Symbol] The default render version.
       #
       # @return [void]
       def initialize(version, root, render_version: :v1)

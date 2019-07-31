@@ -1,6 +1,8 @@
 require_relative 'params_parse_operation'
 
 module Onsi
+  ##
+  # @private
   class ParamsParser
     attr_reader :data
     attr_reader :included

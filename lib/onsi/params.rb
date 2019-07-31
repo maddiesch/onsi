@@ -98,6 +98,8 @@ module Onsi
         parse(params, attributes, relationships)
       end
 
+      ##
+      # (see Onsi::Params#safe_fetch)
       def safe_fetch(key, id)
         yield(id)
       rescue ActiveRecord::RecordNotFound
@@ -169,6 +171,10 @@ module Onsi
       value
     end
 
+    ##
+    # Returns the value at the path. +team/name+
+    #
+    # @return [String]
     def require_path(key_path)
       value = flatten.dig(*key_path.split('/'))
       if value.nil?
@@ -181,15 +187,15 @@ module Onsi
     ##
     # Handle finding a relationship's object.
     #
-    # @param key [String, Symbol] The key for the relationship
-    #
-    # @raise [RelationshipNotFound] Thrown instead of an `ActiveRecord::RecordNotFound`
-    #   This allows the `Onsi::ErrorResponder` to build an appropriate response.
-    #
     # @example
     #   params.safe_fetch(:person) do |id|
     #     Person.find(id)
     #   end
+    #
+    # @param key [String, Symbol] The key for the relationship
+    #
+    # @raise [RelationshipNotFound] Thrown instead of an `ActiveRecord::RecordNotFound`
+    #   This allows the `Onsi::ErrorResponder` to build an appropriate response.
     #
     # @return [Any]
     def safe_fetch(key, &block)

@@ -15,6 +15,8 @@ module Onsi
   # @author Maddie Schipper
   # @since 1.4.0
   class Paginate
+    ##
+    # @private
     Result = Struct.new(:query, :params)
 
     class << self

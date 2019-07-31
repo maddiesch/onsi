@@ -40,7 +40,7 @@ module Onsi
         # If this is not manually set the name of the edge will be used by removing
         # the tail's name from the name. e.g. +PersonEmails+ becomes +emails+
         #
-        # @param node [#to_s] The fragment for the edge.
+        # @param fragment [#to_s] The fragment for the edge.
         #
         # @return [String] The fragment
         def fragment(fragment = nil)

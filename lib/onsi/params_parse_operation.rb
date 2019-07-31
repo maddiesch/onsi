@@ -8,6 +8,8 @@ module Onsi
   class ParamsParseOperation
     MULTI_SOURCE_PATH = '*'.freeze
 
+    ##
+    # @private
     Result = Struct.new(:id, :attributes, :relationships) do
       def flattened
         attributes.merge(relationships)
