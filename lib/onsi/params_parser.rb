@@ -1,3 +1,5 @@
+require 'action_controller/metal/strong_parameters'
+
 require_relative 'params_parse_operation'
 
 module Onsi
@@ -8,7 +10,8 @@ module Onsi
     attr_reader :relationships
 
     def initialize(params, attributes, relationships)
-      @data = params.require(:data)
+      @data = params.fetch(:data)
+      @data = ActionController::Parameters.new(@data) unless @data.is_a?(ActionController::Parameters)
       @included = params.fetch(:included, [])
       @attributes = attributes
       @relationships = relationships
