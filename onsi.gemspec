@@ -23,14 +23,14 @@ Gem::Specification.new do |spec|
   spec.required_ruby_version = '>= 2.3'
 
   spec.add_dependency 'addressable', '>= 2.5', '< 3.0'
-  spec.add_dependency 'rails',       '>= 5.0', '< 6.0'
+  spec.add_dependency 'rails',       '>= 5.0', '< 7.0'
 
-  spec.add_development_dependency 'bundler',          '>= 1.16', '< 3.0'
-  spec.add_development_dependency 'database_cleaner', '~> 1.7.0'
-  spec.add_development_dependency 'pry',              '~> 0.11.3'
-  spec.add_development_dependency 'rake',             '~> 10.0'
-  spec.add_development_dependency 'rspec-rails',      '~> 3.7.2'
-  spec.add_development_dependency 'simplecov',        '~> 0.15'
-  spec.add_development_dependency 'sqlite3',          '~> 1.3.10'
-  spec.add_development_dependency 'yard',             '~> 0.9.16'
+  spec.add_development_dependency 'bundler'
+  spec.add_development_dependency 'database_cleaner'
+  spec.add_development_dependency 'pry'
+  spec.add_development_dependency 'rake'
+  spec.add_development_dependency 'rspec-rails'
+  spec.add_development_dependency 'simplecov', '< 0.18' # >= .18 breaks the test reporter
+  spec.add_development_dependency 'sqlite3'
+  spec.add_development_dependency 'yard'
 end
